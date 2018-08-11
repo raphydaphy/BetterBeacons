@@ -1,4 +1,4 @@
-package main.java.com.raphydaphy.betterbeacons.core;
+package com.raphydaphy.betterbeacons.core;
 
 import org.dimdev.riftloader.listener.InitializationListener;
 import org.spongepowered.asm.mixin.Mixins;

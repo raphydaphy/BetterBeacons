@@ -1,6 +1,7 @@
-package main.java.com.raphydaphy.betterbeacons.block;
+package com.raphydaphy.betterbeacons.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBeacon;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.stats.StatList;
@@ -11,7 +12,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockBetterBeacon extends Block
+public class BlockBetterBeacon extends BlockBeacon
 {
     public BlockBetterBeacon(Builder builder)
     {
