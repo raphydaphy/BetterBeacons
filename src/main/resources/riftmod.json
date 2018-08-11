@@ -5,6 +5,7 @@
     "raphydaphy"
   ],
   "listeners": [
-    "com.raphydaphy.betterbeacons.BetterBeacons"
+    "com.raphydaphy.betterbeacons.BetterBeacons".
+    "com.raphydaphy.betterbeacons.core.BetterBeaconsCore"
   ]
 }
