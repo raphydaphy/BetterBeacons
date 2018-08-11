@@ -1,4 +1,4 @@
 protected-f field bix i Z # TileEntityBeacon.isComplete
 protected-f field bix k I # TileEntityBeacon.levels
 protected-f field bix f Ljava/util/List; # TileEntityBeacon.beamSegments
-public-f method bix$a a V # TileEntityBeacon.BeamSegment#incrementHeight
+public method bix$a a ()V # TileEntityBeacon.BeamSegment#incrementHeight

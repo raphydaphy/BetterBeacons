@@ -133,34 +133,46 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
                     break;
                 }
 
-                boolean lvt_10_4_ = true;
+                boolean levelComplete = true;
 
-                for (int lvt_11_2_ = posX - counter; lvt_11_2_ <= posX + counter && lvt_10_4_; ++lvt_11_2_)
+                int levelIron = 0;
+                int levelGold = 0;
+                int levelEmerald = 0;
+                int levelDiamond = 0;
+
+                for (int lvt_11_2_ = posX - counter; lvt_11_2_ <= posX + counter && levelComplete; ++lvt_11_2_)
                 {
                     for (int lvt_12_1_ = posZ - counter; lvt_12_1_ <= posZ + counter; ++lvt_12_1_)
                     {
                         Block block = this.world.getBlockState(new BlockPos(lvt_11_2_, lvt_9_2_, lvt_12_1_)).getBlock();
                         if (block == Blocks.IRON_BLOCK)
                         {
-                            this.iron++;
+                            levelIron++;
                         } else if (block == Blocks.GOLD_BLOCK)
                         {
-                            this.gold++;
+                            levelGold++;
                         } else if (block == Blocks.EMERALD_BLOCK)
                         {
-                            this.emerald++;
+                            levelEmerald++;
                         } else if (block == Blocks.DIAMOND_BLOCK)
                         {
-                            this.diamond++;
+                            levelDiamond++;
                         } else
                         {
-                            lvt_10_4_ = false;
+                            levelComplete = false;
                             break;
                         }
                     }
                 }
 
-                if (!lvt_10_4_)
+                if (levelComplete)
+                {
+                    this.iron += levelIron;
+                    this.gold += levelGold;
+                    this.emerald += levelEmerald;
+                    this.diamond += levelDiamond;
+                }
+                else
                 {
                     break;
                 }
@@ -187,6 +199,21 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
 
     private void addBetterEffects()
     {
-
+        if (diamond > 15)
+        {
+            System.out.println(diamond + " A LOT OF DIAMOND");
+        }
+        if (gold > 30)
+        {
+            System.out.println("Many golds " + gold);
+        }
+        if (emerald > 5)
+        {
+            System.out.println("EMERAL " + emerald);
+        }
+        if (iron > 50)
+        {
+            System.out.println(iron + " iron for day");
+        }
     }
 }
