@@ -1,6 +1,5 @@
 package com.raphydaphy.betterbeacons;
 
-import com.raphydaphy.betterbeacons.block.BlockBetterBeacon;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ResourceLocation;
