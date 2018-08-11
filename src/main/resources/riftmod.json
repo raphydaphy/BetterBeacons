@@ -1,0 +1,10 @@
+{
+  "id": "betterbeacons",
+  "name": "Better Beacons",
+  "authors": [
+    "raphydaphy"
+  ],
+  "listeners": [
+    "com.raphydaphy.betterbeacons.BetterBeacons"
+  ]
+}
