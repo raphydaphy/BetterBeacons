@@ -1,4 +1,4 @@
-package com.raphydaphy.betterbeacons;
+package com.raphydaphy.betterbeacons.beacon;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
@@ -38,6 +38,12 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
             this.addBetterEffects();
         }
 
+    }
+
+    @Override
+    public String getGuiID()
+    {
+        return "betterbeacons:better_beacon";
     }
 
     @Override
@@ -171,8 +177,7 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
                     this.gold += levelGold;
                     this.emerald += levelEmerald;
                     this.diamond += levelDiamond;
-                }
-                else
+                } else
                 {
                     break;
                 }
