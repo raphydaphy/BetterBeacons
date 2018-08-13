@@ -6,6 +6,7 @@
   "package": "com.raphydaphy.betterbeacons.core",
   "refmap": "mixins.betterbeacons.refmap.json",
   "mixins": [
+    "MixinTileEntityBeacon"
   ],
   "client": []
 }
