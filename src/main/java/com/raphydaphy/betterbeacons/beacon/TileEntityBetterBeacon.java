@@ -7,8 +7,10 @@ import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -38,6 +40,65 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
             this.addBetterEffects();
         }
 
+    }
+
+    @Override
+    public int getField(int field)
+    {
+        switch (field)
+        {
+            case 0:
+                return this.levels;
+            case 1:
+                return countToStage(iron);
+            case 2:
+                return countToStage(gold);
+            case 3:
+                return countToStage(emerald);
+            case 4:
+                return countToStage(diamond);
+            default:
+                return 0;
+        }
+    }
+
+    @Override
+    public void setField(int field, int value)
+    {
+        switch (field)
+        {
+            case 0:
+                this.levels = value;
+                break;
+        }
+    }
+
+    @Override
+    public int getFieldCount()
+    {
+        return 5;
+    }
+
+    private int countToStage(int count) // 164 in a completed pyramid
+    {
+        if (count >= 164)
+        {
+            return 5;
+        } else if (count >= 96)
+        {
+            return 4;
+        }
+        else if (count >= 48)
+        {
+            return 3;
+        } else if (count >= 16)
+        {
+            return 2;
+        } else if (count >= 4)
+        {
+            return 1;
+        }
+        return 0;
     }
 
     @Override
@@ -204,21 +265,5 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
 
     private void addBetterEffects()
     {
-        if (diamond > 15)
-        {
-            System.out.println(diamond + " A LOT OF DIAMOND");
-        }
-        if (gold > 30)
-        {
-            System.out.println("Many golds " + gold);
-        }
-        if (emerald > 5)
-        {
-            System.out.println("EMERAL " + emerald);
-        }
-        if (iron > 50)
-        {
-            System.out.println(iron + " iron for day");
-        }
     }
 }

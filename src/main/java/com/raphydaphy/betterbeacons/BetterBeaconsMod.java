@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
@@ -17,7 +18,7 @@ import org.dimdev.rift.listener.client.GameGuiAdder;
 
 public class BetterBeaconsMod implements BlockAdder, GameGuiAdder, TileEntityTypeAdder
 {
-    private static final Block BETTER_BEACON = new BlockBetterBeacon(Block.Builder.create(Material.ROCK));
+    private static final Block BETTER_BEACON = new BlockBetterBeacon(Block.Builder.create(Material.ROCK).hardnessAndResistance(3, 3).lightValue(15));
     public static TileEntityType<TileEntityBetterBeacon> BETTER_BEACON_TE;
 
     @Override
@@ -34,7 +35,7 @@ public class BetterBeaconsMod implements BlockAdder, GameGuiAdder, TileEntityTyp
     {
         if (id.equals("betterbeacons:better_beacon"))
         {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiBetterBeacon(player.inventory, inventory));
+            Minecraft.getMinecraft().displayGuiScreen(new GuiBetterBeacon(player.inventory,inventory));
         }
     }
 
