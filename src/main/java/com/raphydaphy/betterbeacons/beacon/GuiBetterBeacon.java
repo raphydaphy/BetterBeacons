@@ -2,6 +2,7 @@ package com.raphydaphy.betterbeacons.beacon;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -13,6 +14,7 @@ import net.minecraft.inventory.ContainerBeacon;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketCloseWindow;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiBetterBeacon extends GuiContainer
@@ -20,6 +22,8 @@ public class GuiBetterBeacon extends GuiContainer
     private static final ResourceLocation BEACON_GUI_TEXTURES = new ResourceLocation("betterbeacons:textures/better_beacon.png");
 
     private final IInventory te;
+    private GuiBetterBeacon.ConfirmButton beaconConfirmButton;
+    private boolean buttonsNotDrawn;
 
     public GuiBetterBeacon(InventoryPlayer playerInv, IInventory inv)
     {
@@ -27,6 +31,15 @@ public class GuiBetterBeacon extends GuiContainer
         this.te = inv;
         this.xSize = 230;
         this.ySize = 219;
+    }
+
+    @Override
+    protected void initGui() {
+        super.initGui();
+        this.beaconConfirmButton = new GuiBetterBeacon.ConfirmButton(-1, this.guiLeft + 164, this.guiTop + 107);
+        this.addButton(this.beaconConfirmButton);
+        this.buttonsNotDrawn = true;
+        this.beaconConfirmButton.enabled = false;
     }
 
     @Override
@@ -99,6 +112,22 @@ public class GuiBetterBeacon extends GuiContainer
         this.drawDefaultBackground();
         super.drawScreen(p_drawScreen_1_, p_drawScreen_2_, p_drawScreen_3_);
         this.renderHoveredToolTip(p_drawScreen_1_, p_drawScreen_2_);
+    }
+
+    class ConfirmButton extends GuiBetterBeacon.Button {
+        public ConfirmButton(int p_i1075_2_, int p_i1075_3_, int p_i1075_4_) {
+            super(p_i1075_2_, p_i1075_3_, p_i1075_4_, GuiBetterBeacon.BEACON_GUI_TEXTURES, 90, 220);
+        }
+
+        public void mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_) {
+           // GuiBetterBeacon.this.mc.getConnection().sendPacket(new CPacketUpdateBeacon(GuiBetterBeacon.this.te.getField(1), GuiBetterBeacon.this.te.getField(2)));
+            GuiBetterBeacon.this.mc.player.connection.sendPacket(new CPacketCloseWindow(GuiBetterBeacon.this.mc.player.openContainer.windowId));
+            GuiBetterBeacon.this.mc.displayGuiScreen((GuiScreen)null);
+        }
+
+        public void drawButtonForegroundLayer(int p_drawButtonForegroundLayer_1_, int p_drawButtonForegroundLayer_2_) {
+            GuiBetterBeacon.this.drawHoveringText(I18n.format("gui.done"), p_drawButtonForegroundLayer_1_, p_drawButtonForegroundLayer_2_);
+        }
     }
 
     abstract static class Button extends GuiButton
