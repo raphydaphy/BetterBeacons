@@ -23,6 +23,10 @@ public class GuiBetterBeacon extends GuiContainer
     private final IInventory te;
     private GuiBetterBeacon.ConfirmButton beaconConfirmButton;
 
+    private int placeholderStage = 0;
+    private static final int[] PLACEHOLDER_U = {162, 162, 144, 144};
+    private static final int[] PLACEHOLDER_V = {235, 219, 235, 219};
+
     public GuiBetterBeacon(InventoryPlayer playerInv, IInventory inv)
     {
         super(new ContainerBetterBeacon(playerInv, inv));
@@ -35,8 +39,8 @@ public class GuiBetterBeacon extends GuiContainer
     protected void initGui()
     {
         super.initGui();
-        this.beaconConfirmButton = new GuiBetterBeacon.ConfirmButton(-1, this.guiLeft + 155, this.guiTop + 107);
-        this.addButton(new GuiBetterBeacon.CancelButton(-2, this.guiLeft + 185, this.guiTop + 107));
+        this.beaconConfirmButton = new GuiBetterBeacon.ConfirmButton(-1, this.guiLeft + 69, this.guiTop + 107);
+        this.addButton(new GuiBetterBeacon.CancelButton(-2, this.guiLeft + 140, this.guiTop + 107));
         this.addButton(this.beaconConfirmButton);
         this.beaconConfirmButton.enabled = false;
     }
@@ -72,12 +76,17 @@ public class GuiBetterBeacon extends GuiContainer
                 itemRender.renderItemAndEffectIntoGUI(new ItemStack(ore), x + 100 + (lvl * 21), y);
             } else
             {
-                this.mc.getTextureManager().bindTexture(BEACON_GUI_TEXTURES);
-                GlStateManager.color(1, 1, 1, 0.5f);
-                drawTexturedModalRect(x + 100 + (lvl * 21), y, oreU, oreV, 16, 16);
-                GlStateManager.color(1, 1, 1, 1);
+                drawFromTex(x + 100 + (lvl * 21), y,oreU, oreV, 0.5f);
             }
         }
+    }
+
+    private void drawFromTex(int x, int y, int u, int v, float alpha)
+    {
+        this.mc.getTextureManager().bindTexture(BEACON_GUI_TEXTURES);
+        GlStateManager.color(1, 1, 1, alpha);
+        drawTexturedModalRect(x, y, u, v, 16, 16);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     @Override
@@ -91,16 +100,21 @@ public class GuiBetterBeacon extends GuiContainer
         drawTexturedModalRect(screenX, screenY, 0, 0, this.xSize, this.ySize);
         itemRender.zLevel = 100.0F;
 
-        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.EMERALD), screenX + 16, screenY + 109);
-        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.DIAMOND), screenX + 16 + 22, screenY + 109);
-        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.GOLD_INGOT), screenX + 16 + 44, screenY + 109);
-        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.IRON_INGOT), screenX + 16 + 66, screenY + 109);
-
         drawStage(Items.IRON_SWORD, Items.IRON_INGOT, 162, 235, te.getField(1), screenX + 14, screenY + 11);
         drawStage(Items.MUSIC_DISC_WAIT, Items.GOLD_INGOT, 144, 235, te.getField(2), screenX + 14, screenY + 33);
         drawStage(Blocks.LILY_PAD.getItem(), Items.EMERALD, 162, 219, te.getField(3), screenX + 14, screenY + 55);
         drawStage(Items.DIAMOND_CHESTPLATE, Items.DIAMOND, 144, 219, te.getField(4), screenX + 14, screenY + 77);
 
+        // Ingot placeholder
+        if (te.getStackInSlot(0).isEmpty())
+        {
+            drawFromTex(screenX+98, screenY+110, PLACEHOLDER_U[placeholderStage], PLACEHOLDER_V[placeholderStage], 0.5f);
+        }
+        // Nether star placeholder
+        if (te.getStackInSlot(1).isEmpty())
+        {
+            drawFromTex(screenX+118,screenY+ 110, 180, 219, 0.5f);
+        }
         this.itemRender.zLevel = 0.0F;
     }
 
@@ -110,6 +124,19 @@ public class GuiBetterBeacon extends GuiContainer
         this.drawDefaultBackground();
         super.drawScreen(p_drawScreen_1_, p_drawScreen_2_, p_drawScreen_3_);
         this.renderHoveredToolTip(p_drawScreen_1_, p_drawScreen_2_);
+    }
+
+    @Override
+    public void updateScreen()
+    {
+        if (Minecraft.getMinecraft().world.getTotalWorldTime() % 25 == 0)
+        {
+            placeholderStage++;
+            if (placeholderStage == 4)
+            {
+                placeholderStage = 0;
+            }
+        }
     }
 
     class CancelButton extends GuiBetterBeacon.Button

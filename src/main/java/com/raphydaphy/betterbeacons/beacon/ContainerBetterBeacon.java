@@ -18,8 +18,8 @@ public class ContainerBetterBeacon extends Container
     public ContainerBetterBeacon(IInventory playerInv, IInventory beaconInv)
     {
         this.tileBeacon = beaconInv;
-        this.oreSlot = new ContainerBetterBeacon.BeaconSlot(beaconInv, 0, 106, 110, false);
-        this.netherStarSlot = new ContainerBetterBeacon.BeaconSlot(beaconInv, 1, 126, 110, true);
+        this.oreSlot = new ContainerBetterBeacon.BeaconSlot(beaconInv, 0, 98, 110, false);
+        this.netherStarSlot = new ContainerBetterBeacon.BeaconSlot(beaconInv, 1, 118, 110, true);
         this.addSlotToContainer(this.oreSlot);
         this.addSlotToContainer(this.netherStarSlot);
 
