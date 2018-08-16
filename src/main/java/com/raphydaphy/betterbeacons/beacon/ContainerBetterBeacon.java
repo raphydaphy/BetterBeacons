@@ -81,52 +81,62 @@ public class ContainerBetterBeacon extends Container
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer p_transferStackInSlot_1_, int slot) {
-        ItemStack lvt_3_1_ = ItemStack.EMPTY;
-        Slot lvt_4_1_ = (Slot)this.inventorySlots.get(slot);
-        if (lvt_4_1_ != null && lvt_4_1_.getHasStack()) {
-            ItemStack lvt_5_1_ = lvt_4_1_.getStack();
-            lvt_3_1_ = lvt_5_1_.copy();
-            if (slot < 2) {
-                if (!this.mergeItemStack(lvt_5_1_, 2, 38, true)) {
+    public ItemStack transferStackInSlot(EntityPlayer player, int slot)
+    {
+        ItemStack ret = ItemStack.EMPTY;
+        Slot lvt_4_1_ = this.inventorySlots.get(slot);
+        if (lvt_4_1_ != null && lvt_4_1_.getHasStack())
+        {
+            ItemStack stackInSlot = lvt_4_1_.getStack();
+            ret = stackInSlot.copy();
+            if (slot < 2)
+            {
+                if (!this.mergeItemStack(stackInSlot, 2, 38, true))
+                {
                     return ItemStack.EMPTY;
                 }
 
-                lvt_4_1_.onSlotChange(lvt_5_1_, lvt_3_1_);
-            } else if (!this.oreSlot.getHasStack() && this.oreSlot.isItemValid(lvt_5_1_) && lvt_5_1_.getCount() == 1) {
-                if (!this.mergeItemStack(lvt_5_1_, 0, 2, false)) {
+                lvt_4_1_.onSlotChange(stackInSlot, ret);
+            } else if (!this.oreSlot.getHasStack() && this.oreSlot.isItemValid(stackInSlot) && this.mergeItemStack(stackInSlot, 0, 1, false))
+            {
+                return ItemStack.EMPTY;
+            } else if (!this.netherStarSlot.getHasStack() && this.netherStarSlot.isItemValid(stackInSlot) && this.mergeItemStack(stackInSlot, 1, 2, false))
+            {
+                return ItemStack.EMPTY;
+            } else if (slot >= 2 && slot < 29)
+            {
+                if (!this.mergeItemStack(stackInSlot, 29, 38, false))
+                {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.netherStarSlot.getHasStack() && this.netherStarSlot.isItemValid(lvt_5_1_) && lvt_5_1_.getCount() == 1) {
-                if (!this.mergeItemStack(lvt_5_1_, 0, 2, false)) {
+            } else if (slot >= 29 && slot < 38)
+            {
+                if (!this.mergeItemStack(stackInSlot, 2, 29, false))
+                {
                     return ItemStack.EMPTY;
                 }
-            }else if (slot >= 2 && slot < 29) {
-                if (!this.mergeItemStack(lvt_5_1_, 29, 38, false)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (slot >= 29 && slot < 38) {
-                if (!this.mergeItemStack(lvt_5_1_, 2, 29, false)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!this.mergeItemStack(lvt_5_1_, 2, 38, false)) {
+            } else if (!this.mergeItemStack(stackInSlot, 2, 38, false))
+            {
                 return ItemStack.EMPTY;
             }
 
-            if (lvt_5_1_.isEmpty()) {
+            if (stackInSlot.isEmpty())
+            {
                 lvt_4_1_.putStack(ItemStack.EMPTY);
-            } else {
+            } else
+            {
                 lvt_4_1_.onSlotChanged();
             }
 
-            if (lvt_5_1_.getCount() == lvt_3_1_.getCount()) {
+            if (stackInSlot.getCount() == ret.getCount())
+            {
                 return ItemStack.EMPTY;
             }
 
-            lvt_4_1_.onTake(p_transferStackInSlot_1_, lvt_5_1_);
+            lvt_4_1_.onTake(player, stackInSlot);
         }
 
-        return lvt_3_1_;
+        return ret;
     }
 
     class BeaconSlot extends Slot
