@@ -15,11 +15,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketCloseWindow;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class GuiBetterBeacon extends GuiContainer
 {
     private static final ResourceLocation BEACON_GUI_TEXTURES = new ResourceLocation("betterbeacons:textures/better_beacon_gui.png");
     private static final int[] PLACEHOLDER_U = {162, 162, 144, 144};
     private static final int[] PLACEHOLDER_V = {235, 219, 235, 219};
+    private static final List<Item> RESOURCES = Arrays.asList(Items.IRON_INGOT, Items.GOLD_INGOT, Items.EMERALD, Items.DIAMOND);
     private static final int TEXTURE_WIDTH = 256;
     private static final int TEXTURE_HEIGHT = 331;
 
@@ -72,23 +76,17 @@ public class GuiBetterBeacon extends GuiContainer
         RenderHelper.enableGUIStandardItemLighting();
     }
 
-    private void drawStage(Item icon, Item ore, int oreU, int oreV, int stage, int x, int y)
+    private void drawStage(Item ore, int oreU, int oreV, int stage, int x, int y)
     {
         GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();
 
         boolean active = stage > 0;
 
-        itemRender.renderItemAndEffectIntoGUI(new ItemStack(icon), x, y);
         for (int lvl = 0; lvl < 5; lvl++)
         {
-            if (lvl < stage)
-            {
-                itemRender.renderItemAndEffectIntoGUI(new ItemStack(ore), x + 100 + (lvl * 21), y);
-            } else
-            {
-                drawGreyStack(x + 100 + (lvl * 21), y,oreU, oreV, active ? 0.5f : 0.15f);
-            }
+            drawGreyStack(x + 100 + (lvl * 21), y,oreU + (lvl < stage ? 36 : 0), oreV, lvl < stage ? (active ? 0.5f : 0.15f) : 1);
+
         }
 
         GlStateManager.popAttrib();
@@ -143,10 +141,10 @@ public class GuiBetterBeacon extends GuiContainer
         }
         itemRender.zLevel = 100.0F;
 
-        drawStage(Items.IRON_SWORD, Items.IRON_INGOT, 162, 235, te.getField(1), screenX + 14, screenY + 11);
-        drawStage(Items.MUSIC_DISC_13, Items.GOLD_INGOT, 144, 235, te.getField(2), screenX + 14, screenY + 33);
-        drawStage(Blocks.LILY_PAD.getItem(), Items.EMERALD, 162, 219, te.getField(3), screenX + 14, screenY + 55);
-        drawStage(Items.DIAMOND_CHESTPLATE, Items.DIAMOND, 144, 219, te.getField(4), screenX + 14, screenY + 77);
+        drawStage(Items.IRON_INGOT, 162, 235, te.getField(1), screenX + 14, screenY + 11);
+        drawStage(Items.GOLD_INGOT, 144, 235, te.getField(2), screenX + 14, screenY + 33);
+        drawStage(Items.EMERALD, 162, 219, te.getField(3), screenX + 14, screenY + 55);
+        drawStage(Items.DIAMOND, 144, 219, te.getField(4), screenX + 14, screenY + 77);
 
         // Ingot placeholder
         if (te.getStackInSlot(0).isEmpty())
@@ -180,7 +178,12 @@ public class GuiBetterBeacon extends GuiContainer
                 placeholderStage = 0;
             }
         }
+
         this.beaconConfirmButton.enabled = !this.te.getStackInSlot(0).isEmpty() && !this.te.getStackInSlot(1).isEmpty();
+        if (this.beaconConfirmButton.enabled)
+        {
+            this.beaconConfirmButton.enabled = this.te.getField(RESOURCES.indexOf(te.getStackInSlot(0).getItem()) + 1) > 0;
+        }
     }
 
     class CancelButton extends GuiBetterBeacon.Button
@@ -229,7 +232,7 @@ public class GuiBetterBeacon extends GuiContainer
         private final int iconY;
         private boolean selected;
 
-        protected Button(int id, int x, int y, ResourceLocation tex, int u, int v)
+        Button(int id, int x, int y, ResourceLocation tex, int u, int v)
         {
             super(id, x, y, 22, 22, "");
             this.iconTexture = tex;
@@ -257,13 +260,13 @@ public class GuiBetterBeacon extends GuiContainer
                     lvt_5_1_ += this.width * 3;
                 }
 
-                this.drawModalRectWithCustomSizedTexture(this.x, this.y, lvt_5_1_, 219, this.width, this.height,TEXTURE_WIDTH, TEXTURE_HEIGHT);
+                drawModalRectWithCustomSizedTexture(this.x, this.y, lvt_5_1_, 219, this.width, this.height,TEXTURE_WIDTH, TEXTURE_HEIGHT);
                 if (!BEACON_GUI_TEXTURES.equals(this.iconTexture))
                 {
                     Minecraft.getMinecraft().getTextureManager().bindTexture(this.iconTexture);
                 }
 
-                this.drawModalRectWithCustomSizedTexture(this.x + 2, this.y + 2, this.iconX, this.iconY, 18, 18,TEXTURE_WIDTH, TEXTURE_HEIGHT);
+                drawModalRectWithCustomSizedTexture(this.x + 2, this.y + 2, this.iconX, this.iconY, 18, 18,TEXTURE_WIDTH, TEXTURE_HEIGHT);
             }
         }
 
