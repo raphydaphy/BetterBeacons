@@ -5,12 +5,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -30,6 +32,14 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
     private int gold = 0;
     private int emerald = 0;
     private int diamond = 0;
+
+    private ItemStack star;
+
+    public TileEntityBetterBeacon()
+    {
+        super();
+        this.star = ItemStack.EMPTY;
+    }
 
     @Override
     public void updateBeacon()
@@ -87,8 +97,7 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
         } else if (count >= 96)
         {
             return 4;
-        }
-        else if (count >= 48)
+        } else if (count >= 48)
         {
             return 3;
         } else if (count >= 16)
@@ -265,5 +274,91 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
 
     private void addBetterEffects()
     {
+    }
+
+    @Override
+    public int getSizeInventory()
+    {
+        return 2;
+    }
+
+    public boolean isEmpty()
+    {
+        return this.payment.isEmpty() && this.star.isEmpty();
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int id)
+    {
+        return id == 0 ? this.payment : (id == 1 ? this.star : ItemStack.EMPTY);
+    }
+
+    @Override
+    public ItemStack decrStackSize(int id, int amount)
+    {
+        if (id == 0 && !this.payment.isEmpty())
+        {
+            if (amount >= this.payment.getCount())
+            {
+                ItemStack lvt_3_1_ = this.payment;
+                this.payment = ItemStack.EMPTY;
+                return lvt_3_1_;
+            } else
+            {
+                return this.payment.splitStack(amount);
+            }
+        } else if (id == 1 && !this.star.isEmpty())
+        {
+            if (amount >= this.star.getCount())
+            {
+                ItemStack lvt_3_1_ = this.star;
+                this.star = ItemStack.EMPTY;
+                return lvt_3_1_;
+            } else
+            {
+                return this.star.splitStack(amount);
+            }
+        } else
+        {
+            return ItemStack.EMPTY;
+        }
+    }
+
+    @Override
+    public ItemStack removeStackFromSlot(int id)
+    {
+        if (id == 0)
+        {
+            ItemStack copy = this.payment;
+            this.payment = ItemStack.EMPTY;
+            return copy;
+        } else if (id == 1)
+        {
+            ItemStack copy = this.star;
+            this.star = ItemStack.EMPTY;
+            return copy;
+        } else
+        {
+            return ItemStack.EMPTY;
+        }
+    }
+
+    @Override
+    public void setInventorySlotContents(int id, ItemStack stack)
+    {
+        if (id == 0)
+        {
+            this.payment = stack;
+        }
+        else if (id == 1)
+        {
+            this.star = stack;
+        }
+    }
+
+    @Override
+    public Container createContainer(InventoryPlayer playerInv, EntityPlayer player)
+    {
+        return new ContainerBetterBeacon(playerInv, this);
     }
 }

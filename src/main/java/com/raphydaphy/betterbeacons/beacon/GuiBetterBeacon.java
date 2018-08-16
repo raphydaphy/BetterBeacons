@@ -10,7 +10,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.ContainerBeacon;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,26 +18,26 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiBetterBeacon extends GuiContainer
 {
-    private static final ResourceLocation BEACON_GUI_TEXTURES = new ResourceLocation("betterbeacons:textures/better_beacon.png");
+    private static final ResourceLocation BEACON_GUI_TEXTURES = new ResourceLocation("betterbeacons:textures/better_beacon_gui.png");
 
     private final IInventory te;
     private GuiBetterBeacon.ConfirmButton beaconConfirmButton;
-    private boolean buttonsNotDrawn;
 
     public GuiBetterBeacon(InventoryPlayer playerInv, IInventory inv)
     {
-        super(new ContainerBeacon(playerInv, inv));
+        super(new ContainerBetterBeacon(playerInv, inv));
         this.te = inv;
         this.xSize = 230;
         this.ySize = 219;
     }
 
     @Override
-    protected void initGui() {
+    protected void initGui()
+    {
         super.initGui();
-        this.beaconConfirmButton = new GuiBetterBeacon.ConfirmButton(-1, this.guiLeft + 164, this.guiTop + 107);
+        this.beaconConfirmButton = new GuiBetterBeacon.ConfirmButton(-1, this.guiLeft + 155, this.guiTop + 107);
+        this.addButton(new GuiBetterBeacon.CancelButton(-2, this.guiLeft + 185, this.guiTop + 107));
         this.addButton(this.beaconConfirmButton);
-        this.buttonsNotDrawn = true;
         this.beaconConfirmButton.enabled = false;
     }
 
@@ -71,12 +70,11 @@ public class GuiBetterBeacon extends GuiContainer
             if (lvl < stage)
             {
                 itemRender.renderItemAndEffectIntoGUI(new ItemStack(ore), x + 100 + (lvl * 21), y);
-            }
-            else
+            } else
             {
                 this.mc.getTextureManager().bindTexture(BEACON_GUI_TEXTURES);
                 GlStateManager.color(1, 1, 1, 0.5f);
-                drawTexturedModalRect(x + 100 + (lvl * 21), y, oreU, oreV,16, 16);
+                drawTexturedModalRect(x + 100 + (lvl * 21), y, oreU, oreV, 16, 16);
                 GlStateManager.color(1, 1, 1, 1);
             }
         }
@@ -93,15 +91,15 @@ public class GuiBetterBeacon extends GuiContainer
         drawTexturedModalRect(screenX, screenY, 0, 0, this.xSize, this.ySize);
         itemRender.zLevel = 100.0F;
 
-        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.EMERALD), screenX + 42, screenY + 109);
-        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.DIAMOND), screenX + 42 + 22, screenY + 109);
-        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.GOLD_INGOT), screenX + 42 + 44, screenY + 109);
-        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.IRON_INGOT), screenX + 42 + 66, screenY + 109);
+        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.EMERALD), screenX + 16, screenY + 109);
+        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.DIAMOND), screenX + 16 + 22, screenY + 109);
+        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.GOLD_INGOT), screenX + 16 + 44, screenY + 109);
+        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.IRON_INGOT), screenX + 16 + 66, screenY + 109);
 
         drawStage(Items.IRON_SWORD, Items.IRON_INGOT, 162, 235, te.getField(1), screenX + 14, screenY + 11);
         drawStage(Items.MUSIC_DISC_WAIT, Items.GOLD_INGOT, 144, 235, te.getField(2), screenX + 14, screenY + 33);
         drawStage(Blocks.LILY_PAD.getItem(), Items.EMERALD, 162, 219, te.getField(3), screenX + 14, screenY + 55);
-        drawStage(Items.DIAMOND_CHESTPLATE, Items.DIAMOND,144,219, te.getField(4), screenX + 14, screenY + 77);
+        drawStage(Items.DIAMOND_CHESTPLATE, Items.DIAMOND, 144, 219, te.getField(4), screenX + 14, screenY + 77);
 
         this.itemRender.zLevel = 0.0F;
     }
@@ -114,18 +112,41 @@ public class GuiBetterBeacon extends GuiContainer
         this.renderHoveredToolTip(p_drawScreen_1_, p_drawScreen_2_);
     }
 
-    class ConfirmButton extends GuiBetterBeacon.Button {
-        public ConfirmButton(int p_i1075_2_, int p_i1075_3_, int p_i1075_4_) {
-            super(p_i1075_2_, p_i1075_3_, p_i1075_4_, GuiBetterBeacon.BEACON_GUI_TEXTURES, 90, 220);
+    class CancelButton extends GuiBetterBeacon.Button
+    {
+        CancelButton(int id, int x, int z)
+        {
+            super(id, x, z, GuiBetterBeacon.BEACON_GUI_TEXTURES, 112, 220);
         }
 
-        public void mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_) {
-           // GuiBetterBeacon.this.mc.getConnection().sendPacket(new CPacketUpdateBeacon(GuiBetterBeacon.this.te.getField(1), GuiBetterBeacon.this.te.getField(2)));
+        public void mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_)
+        {
             GuiBetterBeacon.this.mc.player.connection.sendPacket(new CPacketCloseWindow(GuiBetterBeacon.this.mc.player.openContainer.windowId));
-            GuiBetterBeacon.this.mc.displayGuiScreen((GuiScreen)null);
+            GuiBetterBeacon.this.mc.displayGuiScreen(null);
         }
 
-        public void drawButtonForegroundLayer(int p_drawButtonForegroundLayer_1_, int p_drawButtonForegroundLayer_2_) {
+        public void drawButtonForegroundLayer(int p_drawButtonForegroundLayer_1_, int p_drawButtonForegroundLayer_2_)
+        {
+            GuiBetterBeacon.this.drawHoveringText(I18n.format("gui.cancel"), p_drawButtonForegroundLayer_1_, p_drawButtonForegroundLayer_2_);
+        }
+    }
+
+    class ConfirmButton extends GuiBetterBeacon.Button
+    {
+        ConfirmButton(int id, int x, int z)
+        {
+            super(id, x, z, GuiBetterBeacon.BEACON_GUI_TEXTURES, 90, 220);
+        }
+
+        public void mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_)
+        {
+            // GuiBetterBeacon.this.mc.getConnection().sendPacket(new CPacketUpdateBeacon(GuiBetterBeacon.this.te.getField(1), GuiBetterBeacon.this.te.getField(2)));
+            GuiBetterBeacon.this.mc.player.connection.sendPacket(new CPacketCloseWindow(GuiBetterBeacon.this.mc.player.openContainer.windowId));
+            GuiBetterBeacon.this.mc.displayGuiScreen((GuiScreen) null);
+        }
+
+        public void drawButtonForegroundLayer(int p_drawButtonForegroundLayer_1_, int p_drawButtonForegroundLayer_2_)
+        {
             GuiBetterBeacon.this.drawHoveringText(I18n.format("gui.done"), p_drawButtonForegroundLayer_1_, p_drawButtonForegroundLayer_2_);
         }
     }
