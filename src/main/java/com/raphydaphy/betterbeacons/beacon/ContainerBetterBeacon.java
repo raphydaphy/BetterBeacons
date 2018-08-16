@@ -1,6 +1,7 @@
 package com.raphydaphy.betterbeacons.beacon;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -11,12 +12,14 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerBetterBeacon extends Container
 {
+    private final InventoryPlayer playerInv;
     public final IInventory tileBeacon;
     private final ContainerBetterBeacon.BeaconSlot oreSlot;
     private final ContainerBetterBeacon.BeaconSlot netherStarSlot;
 
     public ContainerBetterBeacon(IInventory playerInv, IInventory beaconInv)
     {
+        this.playerInv = (InventoryPlayer) playerInv;
         this.tileBeacon = beaconInv;
         this.oreSlot = new ContainerBetterBeacon.BeaconSlot(beaconInv, 0, 98, 110, false);
         this.netherStarSlot = new ContainerBetterBeacon.BeaconSlot(beaconInv, 1, 118, 110, true);
@@ -39,22 +42,20 @@ public class ContainerBetterBeacon extends Container
 
     }
 
+    @Override
     public void addListener(IContainerListener p_addListener_1_)
     {
         super.addListener(p_addListener_1_);
         p_addListener_1_.sendAllWindowProperties(this, this.tileBeacon);
     }
 
+    @Override
     public void updateProgressBar(int p_updateProgressBar_1_, int p_updateProgressBar_2_)
     {
         this.tileBeacon.setField(p_updateProgressBar_1_, p_updateProgressBar_2_);
     }
 
-    public IInventory getTileEntity()
-    {
-        return this.tileBeacon;
-    }
-
+    @Override
     public void onContainerClosed(EntityPlayer player)
     {
         super.onContainerClosed(player);
@@ -73,91 +74,93 @@ public class ContainerBetterBeacon extends Container
         }
     }
 
+    @Override
     public boolean canInteractWith(EntityPlayer player)
     {
         return this.tileBeacon.isUsableByPlayer(player);
     }
 
-    public ItemStack transferStackInSlot(EntityPlayer player, int slot)
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
     {
-        ItemStack lvt_3_1_ = ItemStack.EMPTY;
-        Slot lvt_4_1_ = (Slot) this.inventorySlots.get(slot);
-        if (lvt_4_1_ != null && lvt_4_1_.getHasStack())
+        ItemStack itemstack = ItemStack.EMPTY;
+        Slot slot = this.inventorySlots.get(index);
+
+        if (slot != null && slot.getHasStack())
         {
-            ItemStack lvt_5_1_ = lvt_4_1_.getStack();
-            lvt_3_1_ = lvt_5_1_.copy();
-            if (slot == 0 || slot == 1)
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
+
+            if (index == 0 || index == 1)
             {
-                System.out.println("boom");
-                if (!this.mergeItemStack(lvt_5_1_, 1, 37, true))
+                if (!this.mergeItemStack(itemstack1, 2, 38, true))
                 {
                     return ItemStack.EMPTY;
                 }
 
-                lvt_4_1_.onSlotChange(lvt_5_1_, lvt_3_1_);
-            } else if (!this.oreSlot.getHasStack() && this.oreSlot.isItemValid(lvt_5_1_) && lvt_5_1_.getCount() == 1)
+                slot.onSlotChange(itemstack1, itemstack);
+            }
+            else if (this.mergeItemStack(itemstack1, 0, 2, false))
             {
-                if (!this.mergeItemStack(lvt_5_1_, 0, 1, false))
+                return ItemStack.EMPTY;
+            }
+            else if (index < 29)
+            {
+                if (!this.mergeItemStack(itemstack1, 29, 38, false))
                 {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.netherStarSlot.getHasStack() && this.netherStarSlot.isItemValid(lvt_5_1_) && lvt_5_1_.getCount() == 1)
+            }
+            else if (index < 38)
             {
-                if (!this.mergeItemStack(lvt_5_1_, 0, 1, false))
+                if (!this.mergeItemStack(itemstack1, 2, 29, false))
                 {
                     return ItemStack.EMPTY;
                 }
-            } else if (slot < 28)
-            {
-                if (!this.mergeItemStack(lvt_5_1_, 28, 37, false))
-                {
-                    return ItemStack.EMPTY;
-                }
-            } else if (slot < 37)
-            {
-                if (!this.mergeItemStack(lvt_5_1_, 1, 28, false))
-                {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!this.mergeItemStack(lvt_5_1_, 1, 37, false))
+            }
+            else if (!this.mergeItemStack(itemstack1, 2, 38, false))
             {
                 return ItemStack.EMPTY;
             }
 
-            if (lvt_5_1_.isEmpty())
+            if (itemstack1.isEmpty())
             {
-                lvt_4_1_.putStack(ItemStack.EMPTY);
-            } else
+                slot.putStack(ItemStack.EMPTY);
+            }
+            else
             {
-                lvt_4_1_.onSlotChanged();
+                slot.onSlotChanged();
             }
 
-            if (lvt_5_1_.getCount() == lvt_3_1_.getCount())
+            if (itemstack1.getCount() == itemstack.getCount())
             {
                 return ItemStack.EMPTY;
             }
 
-            lvt_4_1_.onTake(player, lvt_5_1_);
+            slot.onTake(playerIn, itemstack1);
         }
 
-        return lvt_3_1_;
+        return itemstack;
     }
 
     class BeaconSlot extends Slot
     {
         private final boolean isStarSlot;
+
         BeaconSlot(IInventory inv, int id, int x, int z, boolean isStarSlot)
         {
             super(inv, id, x, z);
             this.isStarSlot = isStarSlot;
         }
 
+        @Override
         public boolean isItemValid(ItemStack stack)
         {
             Item item = stack.getItem();
             return isStarSlot ? item == Items.NETHER_STAR : (item == Items.EMERALD || item == Items.DIAMOND || item == Items.GOLD_INGOT || item == Items.IRON_INGOT);
         }
 
+        @Override
         public int getSlotStackLimit()
         {
             return 1;

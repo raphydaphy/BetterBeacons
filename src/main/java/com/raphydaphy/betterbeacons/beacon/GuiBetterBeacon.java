@@ -273,15 +273,5 @@ public class GuiBetterBeacon extends GuiContainer
                 drawModalRectWithCustomSizedTexture(this.x + 2, this.y + 2, this.iconX, this.iconY, 18, 18,TEXTURE_WIDTH, TEXTURE_HEIGHT);
             }
         }
-
-        public boolean isSelected()
-        {
-            return this.selected;
-        }
-
-        public void setSelected(boolean p_setSelected_1_)
-        {
-            this.selected = p_setSelected_1_;
-        }
     }
 }

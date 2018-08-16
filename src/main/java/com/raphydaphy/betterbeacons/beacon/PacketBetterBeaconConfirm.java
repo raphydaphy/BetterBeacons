@@ -9,12 +9,15 @@ public class PacketBetterBeaconConfirm implements Packet<INetHandlerPlayServer>
 {
     private int index;
 
-    public PacketBetterBeaconConfirm()  { }
+    public PacketBetterBeaconConfirm()
+    {
+    }
 
     public PacketBetterBeaconConfirm(int index)
     {
         this.index = index;
     }
+
     @Override
     public void readPacketData(PacketBuffer packetBuffer)
     {
@@ -30,7 +33,7 @@ public class PacketBetterBeaconConfirm implements Packet<INetHandlerPlayServer>
     @Override
     public void processPacket(INetHandlerPlayServer connection)
     {
-        NetHandlerPlayServer server = (NetHandlerPlayServer)connection;
+        NetHandlerPlayServer server = (NetHandlerPlayServer) connection;
         if (server.player.openContainer instanceof ContainerBetterBeacon)
         {
             ContainerBetterBeacon container = (ContainerBetterBeacon) server.player.openContainer;
