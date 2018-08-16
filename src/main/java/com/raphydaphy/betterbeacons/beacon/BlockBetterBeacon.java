@@ -35,7 +35,6 @@ public class BlockBetterBeacon extends BlockBeacon
         } else
         {
             TileEntity te = world.getTileEntity(pos);
-            System.out.println(te);
             if (te instanceof TileEntityBetterBeacon)
             {
                 player.displayGUIChest((IInventory)te);

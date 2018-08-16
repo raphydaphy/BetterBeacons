@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerBetterBeacon extends Container
 {
-    private final IInventory tileBeacon;
+    public final IInventory tileBeacon;
     private final ContainerBetterBeacon.BeaconSlot oreSlot;
     private final ContainerBetterBeacon.BeaconSlot netherStarSlot;
 
@@ -78,16 +78,17 @@ public class ContainerBetterBeacon extends Container
         return this.tileBeacon.isUsableByPlayer(player);
     }
 
-    public ItemStack transferStackInSlot(EntityPlayer player, int p_transferStackInSlot_2_)
+    public ItemStack transferStackInSlot(EntityPlayer player, int slot)
     {
         ItemStack lvt_3_1_ = ItemStack.EMPTY;
-        Slot lvt_4_1_ = (Slot) this.inventorySlots.get(p_transferStackInSlot_2_);
+        Slot lvt_4_1_ = (Slot) this.inventorySlots.get(slot);
         if (lvt_4_1_ != null && lvt_4_1_.getHasStack())
         {
             ItemStack lvt_5_1_ = lvt_4_1_.getStack();
             lvt_3_1_ = lvt_5_1_.copy();
-            if (p_transferStackInSlot_2_ == 0)
+            if (slot == 0 || slot == 1)
             {
+                System.out.println("boom");
                 if (!this.mergeItemStack(lvt_5_1_, 1, 37, true))
                 {
                     return ItemStack.EMPTY;
@@ -100,13 +101,19 @@ public class ContainerBetterBeacon extends Container
                 {
                     return ItemStack.EMPTY;
                 }
-            } else if (p_transferStackInSlot_2_ < 28)
+            } else if (!this.netherStarSlot.getHasStack() && this.netherStarSlot.isItemValid(lvt_5_1_) && lvt_5_1_.getCount() == 1)
+            {
+                if (!this.mergeItemStack(lvt_5_1_, 0, 1, false))
+                {
+                    return ItemStack.EMPTY;
+                }
+            } else if (slot < 28)
             {
                 if (!this.mergeItemStack(lvt_5_1_, 28, 37, false))
                 {
                     return ItemStack.EMPTY;
                 }
-            } else if (p_transferStackInSlot_2_ < 37)
+            } else if (slot < 37)
             {
                 if (!this.mergeItemStack(lvt_5_1_, 1, 28, false))
                 {

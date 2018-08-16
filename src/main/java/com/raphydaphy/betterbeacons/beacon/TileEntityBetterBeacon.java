@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -26,6 +27,7 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
     private static final String GOLD_KEY = "Gold";
     private static final String EMERALD_KEY = "Emerald";
     private static final String DIAMOND_KEY = "Diamond";
+    private static final String ACTIVATED_TIERS_KEY = "ActivatedTier";
 
     // How many of each block is in the beacon structure
     private int iron = 0;
@@ -34,6 +36,7 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
     private int diamond = 0;
 
     private ItemStack star;
+    private boolean[] activatedTiers = new boolean[4];
 
     public TileEntityBetterBeacon()
     {
@@ -68,6 +71,10 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
             case 4:
                 return countToStage(diamond);
             default:
+                if (field > 4 && field < 9)
+                {
+                    return activatedTiers[field - 5] ? 1 : 0;
+                }
                 return 0;
         }
     }
@@ -75,18 +82,25 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
     @Override
     public void setField(int field, int value)
     {
-        switch (field)
+        if (field == 0)
         {
-            case 0:
-                this.levels = value;
-                break;
+            this.levels = value;
         }
+        else if (field > 4 && field < 9)
+        {
+            if (value == 1 && !activatedTiers[field - 5])
+            {
+                this.func_205736_a(SoundEvents.BLOCK_BEACON_POWER_SELECT);
+            }
+            activatedTiers[field - 5] = value == 1;
+        }
+        markDirty();
     }
 
     @Override
     public int getFieldCount()
     {
-        return 5;
+        return 9;
     }
 
     private int countToStage(int count) // 164 in a completed pyramid
@@ -124,6 +138,10 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
         this.gold = tag.getInteger(GOLD_KEY);
         this.emerald = tag.getInteger(EMERALD_KEY);
         this.diamond = tag.getInteger(DIAMOND_KEY);
+        for (int i = 0; i < 4; i++)
+        {
+            activatedTiers[i] = tag.getBoolean(ACTIVATED_TIERS_KEY + i);
+        }
     }
 
     @Override
@@ -134,6 +152,10 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
         tag.setInteger(GOLD_KEY, gold);
         tag.setInteger(EMERALD_KEY, emerald);
         tag.setInteger(DIAMOND_KEY, diamond);
+        for (int i = 0; i < 4; i++)
+        {
+            tag.setBoolean(ACTIVATED_TIERS_KEY + i, activatedTiers[i]);
+        }
         return tag;
     }
 
@@ -360,5 +382,12 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
     public Container createContainer(InventoryPlayer playerInv, EntityPlayer player)
     {
         return new ContainerBetterBeacon(playerInv, this);
+    }
+
+    @Override
+    public void clear()
+    {
+        super.clear();
+        this.star = ItemStack.EMPTY;
     }
 }

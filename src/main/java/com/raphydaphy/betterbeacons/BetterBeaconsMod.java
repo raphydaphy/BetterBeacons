@@ -2,6 +2,7 @@ package com.raphydaphy.betterbeacons;
 
 import com.raphydaphy.betterbeacons.beacon.BlockBetterBeacon;
 import com.raphydaphy.betterbeacons.beacon.GuiBetterBeacon;
+import com.raphydaphy.betterbeacons.beacon.PacketBetterBeaconConfirm;
 import com.raphydaphy.betterbeacons.beacon.TileEntityBetterBeacon;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -9,14 +10,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.network.EnumPacketDirection;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IInteractionObject;
 import org.dimdev.rift.listener.BlockAdder;
+import org.dimdev.rift.listener.PacketAdder;
 import org.dimdev.rift.listener.TileEntityTypeAdder;
 import org.dimdev.rift.listener.client.GameGuiAdder;
 
-public class BetterBeaconsMod implements BlockAdder, GameGuiAdder, TileEntityTypeAdder
+public class BetterBeaconsMod implements BlockAdder, GameGuiAdder, TileEntityTypeAdder, PacketAdder
 {
     private static final Block BETTER_BEACON = new BlockBetterBeacon(Block.Builder.create(Material.ROCK).hardnessAndResistance(3, 3).lightValue(15));
     public static TileEntityType<TileEntityBetterBeacon> BETTER_BEACON_TE;
@@ -43,5 +46,20 @@ public class BetterBeaconsMod implements BlockAdder, GameGuiAdder, TileEntityTyp
     public void registerTileEntityTypes()
     {
         BETTER_BEACON_TE = TileEntityType.registerTileEntityType("betterbeacons:better_beacon", TileEntityType.Builder.create(TileEntityBetterBeacon::new));
+    }
+
+    @Override
+    public void registerHandshakingPackets(PacketRegistrationReceiver receiver) { }
+
+    @Override
+    public void registerStatusPackets(PacketRegistrationReceiver receiver) { }
+
+    @Override
+    public void registerLoginPackets(PacketRegistrationReceiver receiver) { }
+
+    @Override
+    public void registerPlayPackets(PacketRegistrationReceiver receiver)
+    {
+        receiver.registerPacket(EnumPacketDirection.SERVERBOUND, PacketBetterBeaconConfirm.class);
     }
 }

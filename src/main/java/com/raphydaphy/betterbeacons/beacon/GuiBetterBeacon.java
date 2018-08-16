@@ -7,16 +7,15 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketCloseWindow;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class GuiBetterBeacon extends GuiContainer
 {
@@ -48,6 +47,8 @@ public class GuiBetterBeacon extends GuiContainer
         this.addButton(new GuiBetterBeacon.CancelButton(-2, this.guiLeft + 140, this.guiTop + 107));
         this.addButton(this.beaconConfirmButton);
         this.beaconConfirmButton.enabled = false;
+
+        System.out.println(te.getField(5));
     }
 
     @Override
@@ -76,16 +77,14 @@ public class GuiBetterBeacon extends GuiContainer
         RenderHelper.enableGUIStandardItemLighting();
     }
 
-    private void drawStage(Item ore, int oreU, int oreV, int stage, int x, int y)
+    private void drawStage(Item ore, int oreU, int oreV, int stage, boolean inactive, int x, int y)
     {
         GlStateManager.pushMatrix();
-
-        boolean active = stage > 0;
 
         for (int lvl = 0; lvl < 5; lvl++)
         {
             boolean reached = stage > lvl;
-            drawGreyStack(x + 100 + (lvl * 21), y,oreU + (reached ? 54 : 0), oreV, reached ? 1 : active ? 0.5f : 0.2f);
+            drawGreyStack(x + 100 + (lvl * 21), y,oreU + (reached ? 54 : 0), oreV, inactive ? (reached ? 0.5f : 0.2f) : (reached ? 1 : 0.5f));
         }
 
         GlStateManager.popMatrix();
@@ -136,7 +135,7 @@ public class GuiBetterBeacon extends GuiContainer
         for (int category = 0; category < 4; category++)
         {
             float alpha = 0.5f;
-            if (te.getField(category + 1) > 0)
+            if (te.getField(category + 5) > 0)
             {
                 alpha = 1;
             }
@@ -144,10 +143,10 @@ public class GuiBetterBeacon extends GuiContainer
         }
         itemRender.zLevel = 100.0F;
 
-        drawStage(Items.IRON_INGOT, 162, 235, te.getField(1), screenX + 14, screenY + 11);
-        drawStage(Items.GOLD_INGOT, 144, 235, te.getField(2), screenX + 14, screenY + 33);
-        drawStage(Items.EMERALD, 162, 219, te.getField(3), screenX + 14, screenY + 55);
-        drawStage(Items.DIAMOND, 144, 219, te.getField(4), screenX + 14, screenY + 77);
+        drawStage(Items.IRON_INGOT, 162, 235, te.getField(1), te.getField(5) == 0,screenX + 14, screenY + 11);
+        drawStage(Items.GOLD_INGOT, 144, 235, te.getField(2),  te.getField(6) == 0,screenX + 14, screenY + 33);
+        drawStage(Items.EMERALD, 162, 219, te.getField(3),  te.getField(7) == 0,screenX + 14, screenY + 55);
+        drawStage(Items.DIAMOND, 144, 219, te.getField(4),  te.getField(8) == 0,screenX + 14, screenY + 77);
 
         // Ingot placeholder
         if (te.getStackInSlot(0).isEmpty())
@@ -185,7 +184,8 @@ public class GuiBetterBeacon extends GuiContainer
         this.beaconConfirmButton.enabled = !this.te.getStackInSlot(0).isEmpty() && !this.te.getStackInSlot(1).isEmpty();
         if (this.beaconConfirmButton.enabled)
         {
-            this.beaconConfirmButton.enabled = this.te.getField(RESOURCES.indexOf(te.getStackInSlot(0).getItem()) + 1) > 0;
+            this.beaconConfirmButton.enabled = this.te.getField(RESOURCES.indexOf(te.getStackInSlot(0).getItem()) + 1) > 0 &&
+                    this.te.getField(RESOURCES.indexOf(te.getStackInSlot(0).getItem()) + 5) == 0;
         }
     }
 
@@ -217,9 +217,10 @@ public class GuiBetterBeacon extends GuiContainer
 
         public void mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_)
         {
-            // GuiBetterBeacon.this.mc.getConnection().sendPacket(new CPacketUpdateBeacon(GuiBetterBeacon.this.te.getField(1), GuiBetterBeacon.this.te.getField(2)));
-            GuiBetterBeacon.this.mc.player.connection.sendPacket(new CPacketCloseWindow(GuiBetterBeacon.this.mc.player.openContainer.windowId));
-            GuiBetterBeacon.this.mc.displayGuiScreen(null);
+            int index = RESOURCES.indexOf(te.getStackInSlot(0).getItem());
+            Objects.requireNonNull(GuiBetterBeacon.this.mc.getConnection()).sendPacket(new PacketBetterBeaconConfirm(index));
+            te.setField(index + 5, 1);
+            te.clear();
         }
 
         public void drawButtonForegroundLayer(int p_drawButtonForegroundLayer_1_, int p_drawButtonForegroundLayer_2_)
@@ -257,7 +258,7 @@ public class GuiBetterBeacon extends GuiContainer
                     lvt_5_1_ += this.width * 2;
                 } else if (this.selected)
                 {
-                    lvt_5_1_ += this.width * 1;
+                    lvt_5_1_ += this.width;
                 } else if (this.hovered)
                 {
                     lvt_5_1_ += this.width * 3;
