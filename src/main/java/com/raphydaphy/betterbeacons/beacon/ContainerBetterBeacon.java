@@ -81,66 +81,52 @@ public class ContainerBetterBeacon extends Container
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
-    {
-        ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
-
-        if (slot != null && slot.getHasStack())
-        {
-            ItemStack itemstack1 = slot.getStack();
-            itemstack = itemstack1.copy();
-
-            if (index == 0 || index == 1)
-            {
-                if (!this.mergeItemStack(itemstack1, 2, 38, true))
-                {
+    public ItemStack transferStackInSlot(EntityPlayer p_transferStackInSlot_1_, int slot) {
+        ItemStack lvt_3_1_ = ItemStack.EMPTY;
+        Slot lvt_4_1_ = (Slot)this.inventorySlots.get(slot);
+        if (lvt_4_1_ != null && lvt_4_1_.getHasStack()) {
+            ItemStack lvt_5_1_ = lvt_4_1_.getStack();
+            lvt_3_1_ = lvt_5_1_.copy();
+            if (slot < 2) {
+                if (!this.mergeItemStack(lvt_5_1_, 2, 38, true)) {
                     return ItemStack.EMPTY;
                 }
 
-                slot.onSlotChange(itemstack1, itemstack);
-            }
-            else if (this.mergeItemStack(itemstack1, 0, 2, false))
-            {
-                return ItemStack.EMPTY;
-            }
-            else if (index < 29)
-            {
-                if (!this.mergeItemStack(itemstack1, 29, 38, false))
-                {
+                lvt_4_1_.onSlotChange(lvt_5_1_, lvt_3_1_);
+            } else if (!this.oreSlot.getHasStack() && this.oreSlot.isItemValid(lvt_5_1_) && lvt_5_1_.getCount() == 1) {
+                if (!this.mergeItemStack(lvt_5_1_, 0, 2, false)) {
                     return ItemStack.EMPTY;
                 }
-            }
-            else if (index < 38)
-            {
-                if (!this.mergeItemStack(itemstack1, 2, 29, false))
-                {
+            } else if (!this.netherStarSlot.getHasStack() && this.netherStarSlot.isItemValid(lvt_5_1_) && lvt_5_1_.getCount() == 1) {
+                if (!this.mergeItemStack(lvt_5_1_, 0, 2, false)) {
                     return ItemStack.EMPTY;
                 }
-            }
-            else if (!this.mergeItemStack(itemstack1, 2, 38, false))
-            {
+            }else if (slot >= 2 && slot < 29) {
+                if (!this.mergeItemStack(lvt_5_1_, 29, 38, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (slot >= 29 && slot < 38) {
+                if (!this.mergeItemStack(lvt_5_1_, 2, 29, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!this.mergeItemStack(lvt_5_1_, 2, 38, false)) {
                 return ItemStack.EMPTY;
             }
 
-            if (itemstack1.isEmpty())
-            {
-                slot.putStack(ItemStack.EMPTY);
-            }
-            else
-            {
-                slot.onSlotChanged();
+            if (lvt_5_1_.isEmpty()) {
+                lvt_4_1_.putStack(ItemStack.EMPTY);
+            } else {
+                lvt_4_1_.onSlotChanged();
             }
 
-            if (itemstack1.getCount() == itemstack.getCount())
-            {
+            if (lvt_5_1_.getCount() == lvt_3_1_.getCount()) {
                 return ItemStack.EMPTY;
             }
 
-            slot.onTake(playerIn, itemstack1);
+            lvt_4_1_.onTake(p_transferStackInSlot_1_, lvt_5_1_);
         }
 
-        return itemstack;
+        return lvt_3_1_;
     }
 
     class BeaconSlot extends Slot
