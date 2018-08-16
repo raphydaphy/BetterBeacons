@@ -2,7 +2,6 @@ package com.raphydaphy.betterbeacons.beacon;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -19,13 +18,15 @@ import net.minecraft.util.ResourceLocation;
 public class GuiBetterBeacon extends GuiContainer
 {
     private static final ResourceLocation BEACON_GUI_TEXTURES = new ResourceLocation("betterbeacons:textures/better_beacon_gui.png");
+    private static final int[] PLACEHOLDER_U = {162, 162, 144, 144};
+    private static final int[] PLACEHOLDER_V = {235, 219, 235, 219};
+    private static final int TEXTURE_WIDTH = 256;
+    private static final int TEXTURE_HEIGHT = 331;
 
     private final IInventory te;
     private GuiBetterBeacon.ConfirmButton beaconConfirmButton;
 
     private int placeholderStage = 0;
-    private static final int[] PLACEHOLDER_U = {162, 162, 144, 144};
-    private static final int[] PLACEHOLDER_V = {235, 219, 235, 219};
 
     public GuiBetterBeacon(InventoryPlayer playerInv, IInventory inv)
     {
@@ -49,10 +50,15 @@ public class GuiBetterBeacon extends GuiContainer
     protected void drawGuiContainerForegroundLayer(int p_drawGuiContainerForegroundLayer_1_, int p_drawGuiContainerForegroundLayer_2_)
     {
         RenderHelper.disableStandardItemLighting();
-        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.iron_category"), 32, 15, 2500392);
-        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.gold_category"), 32, 15 + 22, 2500392);
-        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.emerald_category"), 32, 15 + 22 * 2, 2500392);
-        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.diamond_category"), 32, 15 + 22 * 3, 2500392);
+
+        GlStateManager.enableBlend();
+        int opaque = 0x262728;
+        int transparent = 0x7f262728;
+        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.iron_category"), 32, 15, te.getField(1) > 0 ? opaque : transparent);
+        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.gold_category"), 32, 15 + 22, te.getField(2) > 0 ? opaque : transparent);
+        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.emerald_category"), 32, 15 + 22 * 2, te.getField(3) > 0 ? opaque : transparent);
+        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.diamond_category"), 32, 15 + 22 * 3, te.getField(4) > 0 ? opaque : transparent);
+        GlStateManager.disableBlend();
 
         for (GuiButton button : this.buttonList)
         {
@@ -68,6 +74,11 @@ public class GuiBetterBeacon extends GuiContainer
 
     private void drawStage(Item icon, Item ore, int oreU, int oreV, int stage, int x, int y)
     {
+        GlStateManager.pushMatrix();
+        GlStateManager.pushAttrib();
+
+        boolean active = stage > 0;
+
         itemRender.renderItemAndEffectIntoGUI(new ItemStack(icon), x, y);
         for (int lvl = 0; lvl < 5; lvl++)
         {
@@ -76,17 +87,40 @@ public class GuiBetterBeacon extends GuiContainer
                 itemRender.renderItemAndEffectIntoGUI(new ItemStack(ore), x + 100 + (lvl * 21), y);
             } else
             {
-                drawFromTex(x + 100 + (lvl * 21), y,oreU, oreV, 0.5f);
+                drawGreyStack(x + 100 + (lvl * 21), y,oreU, oreV, active ? 0.5f : 0.15f);
             }
         }
+
+        GlStateManager.popAttrib();
+        GlStateManager.popMatrix();
     }
 
-    private void drawFromTex(int x, int y, int u, int v, float alpha)
+    private void drawGreyStack(int x, int y, int u, int v, float alpha)
     {
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+
         this.mc.getTextureManager().bindTexture(BEACON_GUI_TEXTURES);
         GlStateManager.color(1, 1, 1, alpha);
-        drawTexturedModalRect(x, y, u, v, 16, 16);
+        drawModalRectWithCustomSizedTexture(x, y, u, v, 16, 16,TEXTURE_WIDTH, TEXTURE_HEIGHT);
         GlStateManager.color(1, 1, 1, 1);
+
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
+    }
+
+    private void drawCategoryBackground(int x, int y, int category, float alpha)
+    {
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+
+        this.mc.getTextureManager().bindTexture(BEACON_GUI_TEXTURES);
+        GlStateManager.color(1, 1, 1, alpha);
+        drawModalRectWithCustomSizedTexture(x, y, 0, 251 + (category * 20), 206, 20,TEXTURE_WIDTH, TEXTURE_HEIGHT);
+        GlStateManager.color(1, 1, 1, 1);
+
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     @Override
@@ -97,23 +131,32 @@ public class GuiBetterBeacon extends GuiContainer
         int screenX = (this.width - this.xSize) / 2;
         int screenY = (this.height - this.ySize) / 2;
 
-        drawTexturedModalRect(screenX, screenY, 0, 0, this.xSize, this.ySize);
+        drawModalRectWithCustomSizedTexture(screenX, screenY, 0, 0, this.xSize, this.ySize, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+        for (int category = 0; category < 4; category++)
+        {
+            float alpha = 0.5f;
+            if (te.getField(category + 1) > 0)
+            {
+                alpha = 1;
+            }
+            drawCategoryBackground(screenX + 12, screenY + 9 + (category * 22), category, alpha);
+        }
         itemRender.zLevel = 100.0F;
 
         drawStage(Items.IRON_SWORD, Items.IRON_INGOT, 162, 235, te.getField(1), screenX + 14, screenY + 11);
-        drawStage(Items.MUSIC_DISC_WAIT, Items.GOLD_INGOT, 144, 235, te.getField(2), screenX + 14, screenY + 33);
+        drawStage(Items.MUSIC_DISC_13, Items.GOLD_INGOT, 144, 235, te.getField(2), screenX + 14, screenY + 33);
         drawStage(Blocks.LILY_PAD.getItem(), Items.EMERALD, 162, 219, te.getField(3), screenX + 14, screenY + 55);
         drawStage(Items.DIAMOND_CHESTPLATE, Items.DIAMOND, 144, 219, te.getField(4), screenX + 14, screenY + 77);
 
         // Ingot placeholder
         if (te.getStackInSlot(0).isEmpty())
         {
-            drawFromTex(screenX+98, screenY+110, PLACEHOLDER_U[placeholderStage], PLACEHOLDER_V[placeholderStage], 0.5f);
+            drawGreyStack(screenX+98, screenY+110, PLACEHOLDER_U[placeholderStage], PLACEHOLDER_V[placeholderStage], 0.5f);
         }
         // Nether star placeholder
         if (te.getStackInSlot(1).isEmpty())
         {
-            drawFromTex(screenX+118,screenY+ 110, 180, 219, 0.5f);
+            drawGreyStack(screenX+118,screenY+ 110, 180, 219, 0.5f);
         }
         this.itemRender.zLevel = 0.0F;
     }
@@ -137,6 +180,7 @@ public class GuiBetterBeacon extends GuiContainer
                 placeholderStage = 0;
             }
         }
+        this.beaconConfirmButton.enabled = !this.te.getStackInSlot(0).isEmpty() && !this.te.getStackInSlot(1).isEmpty();
     }
 
     class CancelButton extends GuiBetterBeacon.Button
@@ -169,7 +213,7 @@ public class GuiBetterBeacon extends GuiContainer
         {
             // GuiBetterBeacon.this.mc.getConnection().sendPacket(new CPacketUpdateBeacon(GuiBetterBeacon.this.te.getField(1), GuiBetterBeacon.this.te.getField(2)));
             GuiBetterBeacon.this.mc.player.connection.sendPacket(new CPacketCloseWindow(GuiBetterBeacon.this.mc.player.openContainer.windowId));
-            GuiBetterBeacon.this.mc.displayGuiScreen((GuiScreen) null);
+            GuiBetterBeacon.this.mc.displayGuiScreen(null);
         }
 
         public void drawButtonForegroundLayer(int p_drawButtonForegroundLayer_1_, int p_drawButtonForegroundLayer_2_)
@@ -213,13 +257,13 @@ public class GuiBetterBeacon extends GuiContainer
                     lvt_5_1_ += this.width * 3;
                 }
 
-                this.drawTexturedModalRect(this.x, this.y, lvt_5_1_, 219, this.width, this.height);
+                this.drawModalRectWithCustomSizedTexture(this.x, this.y, lvt_5_1_, 219, this.width, this.height,TEXTURE_WIDTH, TEXTURE_HEIGHT);
                 if (!BEACON_GUI_TEXTURES.equals(this.iconTexture))
                 {
                     Minecraft.getMinecraft().getTextureManager().bindTexture(this.iconTexture);
                 }
 
-                this.drawTexturedModalRect(this.x + 2, this.y + 2, this.iconX, this.iconY, 18, 18);
+                this.drawModalRectWithCustomSizedTexture(this.x + 2, this.y + 2, this.iconX, this.iconY, 18, 18,TEXTURE_WIDTH, TEXTURE_HEIGHT);
             }
         }
 
