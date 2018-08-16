@@ -79,24 +79,27 @@ public class GuiBetterBeacon extends GuiContainer
     private void drawStage(Item ore, int oreU, int oreV, int stage, int x, int y)
     {
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
 
         boolean active = stage > 0;
 
         for (int lvl = 0; lvl < 5; lvl++)
         {
-            drawGreyStack(x + 100 + (lvl * 21), y,oreU + (lvl < stage ? 36 : 0), oreV, lvl < stage ? (active ? 0.5f : 0.15f) : 1);
-
+            boolean reached = stage > lvl;
+            drawGreyStack(x + 100 + (lvl * 21), y,oreU + (reached ? 54 : 0), oreV, reached ? 1 : active ? 0.5f : 0.2f);
         }
 
-        GlStateManager.popAttrib();
         GlStateManager.popMatrix();
     }
 
     private void drawGreyStack(int x, int y, int u, int v, float alpha)
     {
         GlStateManager.pushMatrix();
+
+        GlStateManager.enableRescaleNormal();
+        GlStateManager.enableAlpha();
+        GlStateManager.alphaFunc(516, 0.1F);
         GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
         this.mc.getTextureManager().bindTexture(BEACON_GUI_TEXTURES);
         GlStateManager.color(1, 1, 1, alpha);
