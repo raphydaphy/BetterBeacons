@@ -9,17 +9,20 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 public class TileEntityBetterBeacon extends TileEntityBeacon
 {
@@ -85,8 +88,7 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
         if (field == 0)
         {
             this.levels = value;
-        }
-        else if (field > 4 && field < 9)
+        } else if (field > 4 && field < 9)
         {
             if (value == 1 && !activatedTiers[field - 5])
             {
@@ -296,6 +298,59 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
 
     private void addBetterEffects()
     {
+        if (this.isComplete && this.levels > 0 && !this.world.isRemote)
+        {
+            double range = (double)(this.levels * 10 + 10);
+            int potionDurations = (9 + this.levels * 2) * 20;
+            int posX = this.pos.getX();
+            int posY = this.pos.getY();
+            int posZ = this.pos.getZ();
+
+            AxisAlignedBB beaconAOE = (new AxisAlignedBB((double) posX, (double) posY, (double) posZ, (double) (posX + 1), (double) (posY + 1), (double) (posZ + 1))).grow(range).expand(0.0D, (double) this.world.getHeight(), 0.0D);
+            List<EntityPlayer> nearbyPlayers = this.world.getEntitiesWithinAABB(EntityPlayer.class, beaconAOE);
+            Iterator nearbyPlayersIterator = nearbyPlayers.iterator();
+
+            EntityPlayer nextPlayer;
+            while (nearbyPlayersIterator.hasNext())
+            {
+                nextPlayer = (EntityPlayer) nearbyPlayersIterator.next();
+                // Offensive (iron)
+                if (activatedTiers[0])
+                {
+                    int tier = countToStage(iron);
+                    if (tier >= 1)
+                    {
+                        nextPlayer.func_195064_c(new PotionEffect(MobEffects.STRENGTH, potionDurations, tier >= 2 ? 1 : 0, true, true));
+                    }
+                }
+                // Quality of Life (gold)
+                if (activatedTiers[1])
+                {
+                    int tier = countToStage(gold);
+                    if (tier >= 1)
+                    {
+                        nextPlayer.func_195064_c(new PotionEffect(MobEffects.SPEED, potionDurations, tier >= 2 ? 1 : 0, true, true));
+                    }
+                    if (tier >= 2)
+                    {
+                        nextPlayer.func_195064_c(new PotionEffect(MobEffects.JUMP_BOOST, potionDurations, tier >= 3 ? 1 : 0, true, true));
+                    }
+                    if (tier >= 3)
+                    {
+                        nextPlayer.func_195064_c(new PotionEffect(MobEffects.HASTE, potionDurations, tier >= 4 ? 1 : 0, true, true));
+                    }
+                }
+                // Defensive (diamond)
+                if (activatedTiers[3])
+                {
+                    int tier = countToStage(diamond);
+                    if (tier >= 1)
+                    {
+                        nextPlayer.func_195064_c(new PotionEffect(MobEffects.RESISTANCE, potionDurations, tier >= 2 ? 1 : 0, true, true));
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -371,8 +426,7 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
         if (id == 0)
         {
             this.payment = stack;
-        }
-        else if (id == 1)
+        } else if (id == 1)
         {
             this.star = stack;
         }
