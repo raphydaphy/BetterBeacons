@@ -2,5 +2,6 @@
   "beacon.betterbeacons.iron_category": "Offensive",
   "beacon.betterbeacons.gold_category": "Quality of Life",
   "beacon.betterbeacons.emerald_category": "Environmental",
-  "beacon.betterbeacons.diamond_category": "Defensive"
+  "beacon.betterbeacons.diamond_category": "Defensive",
+  "effect.betterbeacons.long_reach": "Long Reach"
 }

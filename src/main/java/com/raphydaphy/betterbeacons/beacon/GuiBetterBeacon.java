@@ -1,5 +1,6 @@
 package com.raphydaphy.betterbeacons.beacon;
 
+import com.raphydaphy.betterbeacons.BetterBeaconsMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -19,7 +20,7 @@ import java.util.Objects;
 
 public class GuiBetterBeacon extends GuiContainer
 {
-    private static final ResourceLocation BEACON_GUI_TEXTURES = new ResourceLocation("betterbeacons:textures/better_beacon_gui.png");
+    private static final ResourceLocation BEACON_GUI_TEXTURES = new ResourceLocation(BetterBeaconsMod.MOD_ID, "textures/better_beacon_gui.png");
     private static final int[] PLACEHOLDER_U = {162, 162, 144, 144};
     private static final int[] PLACEHOLDER_V = {235, 219, 235, 219};
     private static final List<Item> RESOURCES = Arrays.asList(Items.IRON_INGOT, Items.GOLD_INGOT, Items.EMERALD, Items.DIAMOND);
@@ -47,8 +48,6 @@ public class GuiBetterBeacon extends GuiContainer
         this.addButton(new GuiBetterBeacon.CancelButton(-2, this.guiLeft + 140, this.guiTop + 107));
         this.addButton(this.beaconConfirmButton);
         this.beaconConfirmButton.enabled = false;
-
-        System.out.println(te.getField(5));
     }
 
     @Override

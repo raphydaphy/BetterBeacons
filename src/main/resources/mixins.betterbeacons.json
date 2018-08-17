@@ -7,7 +7,8 @@
   "refmap": "mixins.betterbeacons.refmap.json",
   "mixins": [
     "MixinBlockBeacon",
-    "MixinTileEntityBeacon"
+    "MixinTileEntityBeacon",
+    "MixinEntityLivingBase"
   ],
   "client": []
 }

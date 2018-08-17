@@ -1,12 +1,11 @@
 package com.raphydaphy.betterbeacons.beacon;
 
+import com.raphydaphy.betterbeacons.BetterBeaconsMod;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -21,13 +20,10 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import org.lwjgl.system.CallbackI;
-import pl.asie.protocharset.rift.hooks.CharsetAttributes;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 public class TileEntityBetterBeacon extends TileEntityBeacon
 {
@@ -59,40 +55,8 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
         {
             this.updateSegmentColorsBetter();
             this.addBetterEffects();
-
-            if (world.isRemote)
-            {
-                setReachClient();
-            } else
-            {
-                setReachServer();
-            }
         }
 
-    }
-
-    private static final AttributeModifier QOL_REACH_DIST = new AttributeModifier(UUID.fromString("b4ca80b5-4151-4d1d-8f76-09e1a3733477"), "QOL Reach Increase", 1000, 0);
-
-    private void setReachClient()
-    {
-        if (!Minecraft.getMinecraft().player.getAttributeMap().getAttributeInstance(CharsetAttributes.BLOCK_REACH_DISTANCE).hasModifier(QOL_REACH_DIST))
-        {
-            Minecraft.getMinecraft().player.getAttributeMap().getAttributeInstance(CharsetAttributes.BLOCK_REACH_DISTANCE).applyModifier(QOL_REACH_DIST);
-        }
-    }
-
-    private void setReachServer()
-    {
-        if (world.getMinecraftServer() != null)
-        {
-            for (EntityPlayer player : world.getMinecraftServer().getPlayerList().getPlayers())
-            {
-                if (!player.getAttributeMap().getAttributeInstance(CharsetAttributes.BLOCK_REACH_DISTANCE).hasModifier(QOL_REACH_DIST))
-                {
-                    player.getAttributeMap().getAttributeInstance(CharsetAttributes.BLOCK_REACH_DISTANCE).applyModifier(QOL_REACH_DIST);
-                }
-            }
-        }
     }
 
     @Override
@@ -166,7 +130,7 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
     @Override
     public String getGuiID()
     {
-        return "betterbeacons:better_beacon";
+        return BetterBeaconsMod.MOD_ID + ":better_beacon";
     }
 
     @Override
@@ -378,7 +342,7 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
                     }
                     if (tier >= 5)
                     {
-                        nextPlayer.getAttributeMap().getAttributeInstance(CharsetAttributes.BLOCK_REACH_DISTANCE).setBaseValue(100);
+                        nextPlayer.func_195064_c(new PotionEffect(BetterBeaconsMod.LONG_REACH_POTION, potionDurations, 0, true, true));
                     }
                 }
                 // Defensive (diamond)
