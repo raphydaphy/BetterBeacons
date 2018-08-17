@@ -22,7 +22,6 @@ public class MixinPlayerControllerMP
     {
         if (BetterBeaconUtils.shouldIncreaseReach(mc.world, mc.player))
         {
-            System.out.println("d i e ");
             info.setReturnValue(currentGameType.isCreative() ? BetterBeaconUtils.QOL_REACH : BetterBeaconUtils.QOL_REACH - 0.5f);
         }
     }
