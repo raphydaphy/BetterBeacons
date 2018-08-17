@@ -7,10 +7,7 @@
   "refmap": "mixins.betterbeacons.refmap.json",
   "mixins": [
     "MixinBlockBeacon",
-    "MixinTileEntityBeacon",
-    "MixinItem",
-    "MixinNetHandlerPlayServer",
-    "MixinPlayerControllerMP"
+    "MixinTileEntityBeacon"
   ],
   "client": []
 }
