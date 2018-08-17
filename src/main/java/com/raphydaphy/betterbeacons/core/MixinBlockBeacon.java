@@ -1,9 +1,7 @@
-package com.raphydaphy.betterbeacons.beacon;
+package com.raphydaphy.betterbeacons.core;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockBeacon;
-import net.minecraft.block.IBucketPickupHandler;
-import net.minecraft.block.ILiquidContainer;
+import com.raphydaphy.betterbeacons.beacon.TileEntityBetterBeacon;
+import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.fluid.Fluid;
@@ -21,24 +19,40 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 
-public class BlockBetterBeacon extends BlockBeacon implements IBucketPickupHandler, ILiquidContainer
+@Mixin(BlockBeacon.class)
+public abstract class MixinBlockBeacon extends BlockContainer implements IBucketPickupHandler, ILiquidContainer
 {
     private static final BooleanProperty WATERLOGGED;
 
-    public BlockBetterBeacon(Builder builder)
+    /**
+     * @author raphydaphy
+     * @reason Overwrite is necessary to initialize the waterlogged property
+     */
+    @Overwrite
+    public MixinBlockBeacon(Builder builder)
     {
         super(builder);
         this.setDefaultState((this.blockState.getBaseState()).withProperty(WATERLOGGED, false));
     }
 
-    @Override
+    /**
+     * @author raphydaphy
+     * @reason In order to prevent replacing the entire TileEntityBeacon class, I need to overwrite this to use a custom TileEntity
+     */
+    @Overwrite
     public TileEntity getTileEntity(IBlockReader reader)
     {
         return new TileEntityBetterBeacon();
     }
 
-    @Override
+    /**
+     * @author raphydaphy
+     * @reason This is required to open my Better Beacon GUI instead of the vanilla one
+     */
+    @Overwrite
     public boolean onRightClick(IBlockState state, World world, BlockPos pos, EntityPlayer player, EnumHand p_onRightClick_5_, EnumFacing p_onRightClick_6_, float p_onRightClick_7_, float p_onRightClick_8_, float p_onRightClick_9_)
     {
         if (world.isRemote)

@@ -6,7 +6,11 @@
   "package": "com.raphydaphy.betterbeacons.core",
   "refmap": "mixins.betterbeacons.refmap.json",
   "mixins": [
-    "MixinTileEntityBeacon"
+    "MixinBlockBeacon",
+    "MixinTileEntityBeacon",
+    "MixinItem",
+    "MixinNetHandlerPlayServer",
+    "MixinPlayerControllerMP"
   ],
   "client": []
 }

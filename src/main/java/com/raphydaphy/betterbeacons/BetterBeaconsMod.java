@@ -1,6 +1,5 @@
 package com.raphydaphy.betterbeacons;
 
-import com.raphydaphy.betterbeacons.beacon.BlockBetterBeacon;
 import com.raphydaphy.betterbeacons.beacon.GuiBetterBeacon;
 import com.raphydaphy.betterbeacons.beacon.PacketBetterBeaconConfirm;
 import com.raphydaphy.betterbeacons.beacon.TileEntityBetterBeacon;
@@ -8,7 +7,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.network.EnumPacketDirection;
 import net.minecraft.tileentity.TileEntityType;
@@ -19,16 +17,9 @@ import org.dimdev.rift.listener.PacketAdder;
 import org.dimdev.rift.listener.TileEntityTypeAdder;
 import org.dimdev.rift.listener.client.GameGuiAdder;
 
-public class BetterBeaconsMod implements BlockAdder, GameGuiAdder, TileEntityTypeAdder, PacketAdder
+public class BetterBeaconsMod implements GameGuiAdder, TileEntityTypeAdder, PacketAdder
 {
-    private static final Block BETTER_BEACON = new BlockBetterBeacon(Block.Builder.create(Material.ROCK).hardnessAndResistance(3, 3).lightValue(15));
     public static TileEntityType<TileEntityBetterBeacon> BETTER_BEACON_TE;
-
-    @Override
-    public void registerBlocks()
-    {
-        Block.registerBlock(new ResourceLocation("beacon"), BETTER_BEACON);
-    }
 
     @Override
     public void displayGui(EntityPlayerSP player, String id, IInteractionObject interactionObject) { }

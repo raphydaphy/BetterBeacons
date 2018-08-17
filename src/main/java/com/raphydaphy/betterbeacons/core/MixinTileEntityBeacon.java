@@ -22,12 +22,9 @@ public abstract class MixinTileEntityBeacon extends TileEntityLockable
 
     @Shadow protected int levels;
 
-    @Shadow @Final public static Potion[][] EFFECTS_LIST;
-
     /**
      * @author raphydaphy
-     * I needed an author tag here for my IDE to be happy for whatever reason.
-     * have fun ide
+     * @reason I need this to change the TileEntityType from the vanilla beacon's to my custom one
      */
     @Overwrite
     public MixinTileEntityBeacon()
