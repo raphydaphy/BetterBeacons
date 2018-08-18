@@ -24,6 +24,8 @@ public class BetterBeaconsMod implements GameGuiAdder, TileEntityTypeAdder, Pack
     private static final Logger log = LogManager.getLogger(MOD_ID);
 
     public static Potion LONG_REACH_POTION = new ModPotion(false, 0xced343).registerPotionAttributeModifier(CharsetAttributes.BLOCK_REACH_DISTANCE, "5b59b1e9-67b0-4192-9073-3550fb47c269", 1, 0).setBeneficial();
+    public static Potion FAST_ATTACK_POTION = new ModPotion(false, 0x936a4c).setBeneficial();
+
     public static TileEntityType<TileEntityBetterBeacon> BETTER_BEACON_TE;
 
     @Override
@@ -68,8 +70,11 @@ public class BetterBeaconsMod implements GameGuiAdder, TileEntityTypeAdder, Pack
         {
             nextID++;
         }
+
         log.info("[BetterBeacons] Registering potions from ID " + nextID);
-        Potion.registerPotion(nextID, MOD_ID + ":long_reach", (LONG_REACH_POTION));
+
+        Potion.registerPotion(nextID++, MOD_ID + ":long_reach", (LONG_REACH_POTION));
+        Potion.registerPotion(nextID++, MOD_ID + ":fast_attack", (FAST_ATTACK_POTION));
     }
 
     private static class ModPotion extends Potion

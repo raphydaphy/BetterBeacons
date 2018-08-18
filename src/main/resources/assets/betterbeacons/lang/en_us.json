@@ -3,5 +3,6 @@
   "beacon.betterbeacons.gold_category": "Quality of Life",
   "beacon.betterbeacons.emerald_category": "Environmental",
   "beacon.betterbeacons.diamond_category": "Defensive",
-  "effect.betterbeacons.long_reach": "Long Reach"
+  "effect.betterbeacons.long_reach": "Long Reach",
+  "effect.betterbeacons.fast_attack": "Fast Attack"
 }

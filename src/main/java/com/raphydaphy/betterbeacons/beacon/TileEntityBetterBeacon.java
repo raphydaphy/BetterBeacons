@@ -323,6 +323,10 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
                     {
                         nextPlayer.func_195064_c(new PotionEffect(MobEffects.STRENGTH, potionDurations, tier >= 2 ? 1 : 0, true, true));
                     }
+                    if (tier >= 2)
+                    {
+                        nextPlayer.func_195064_c(new PotionEffect(BetterBeaconsMod.FAST_ATTACK_POTION, potionDurations, tier >= 3 ? 1 : 0, true, true));
+                    }
                 }
                 // Quality of Life (gold)
                 if (activatedTiers[1])
