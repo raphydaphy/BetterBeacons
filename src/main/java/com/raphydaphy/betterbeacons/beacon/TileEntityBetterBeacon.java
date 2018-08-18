@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -356,6 +357,21 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
                     if (tier >= 1)
                     {
                         nextPlayer.func_195064_c(new PotionEffect(MobEffects.RESISTANCE, potionDurations, tier >= 2 ? 1 : 0, true, true));
+                    }
+                }
+            }
+
+            // Resistance for Iron/Snow golems and villagers ( Defense Tier 3 )
+            if (activatedTiers[0])
+            {
+                int tier = countToStage(iron);
+                if (tier >= 3)
+                {
+                    List<EntityGolem> nearbyGolems = this.world.getEntitiesWithinAABB(EntityGolem.class, beaconAOE);
+
+                    for (EntityGolem golem : nearbyGolems)
+                    {
+                        golem.func_195064_c(new PotionEffect(MobEffects.STRENGTH, potionDurations, tier >= 4 ? 1 : 0, false, true));
                     }
                 }
             }
