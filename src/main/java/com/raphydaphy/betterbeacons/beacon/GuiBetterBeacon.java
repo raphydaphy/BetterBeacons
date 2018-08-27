@@ -51,7 +51,7 @@ public class GuiBetterBeacon extends GuiContainer
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int p_drawGuiContainerForegroundLayer_1_, int p_drawGuiContainerForegroundLayer_2_)
+    protected void drawGuiContainerForegroundLayer(int x, int y)
     {
         RenderHelper.disableStandardItemLighting();
 
@@ -68,7 +68,7 @@ public class GuiBetterBeacon extends GuiContainer
         {
             if (button.isMouseOver())
             {
-                button.drawButtonForegroundLayer(p_drawGuiContainerForegroundLayer_1_ - this.guiLeft, p_drawGuiContainerForegroundLayer_2_ - this.guiTop);
+                button.drawButtonForegroundLayer(x - this.guiLeft, y - this.guiTop);
                 break;
             }
         }
@@ -123,7 +123,7 @@ public class GuiBetterBeacon extends GuiContainer
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float p_drawGuiContainerBackgroundLayer_1_, int p_drawGuiContainerBackgroundLayer_2_, int p_drawGuiContainerBackgroundLayer_3_)
+    protected void drawGuiContainerBackgroundLayer(float it, int dosent, int matter)
     {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(BEACON_GUI_TEXTURES);
@@ -161,11 +161,11 @@ public class GuiBetterBeacon extends GuiContainer
     }
 
     @Override
-    public void drawScreen(int p_drawScreen_1_, int p_drawScreen_2_, float p_drawScreen_3_)
+    public void drawScreen(int x, int y, float partialTicks)
     {
         this.drawDefaultBackground();
-        super.drawScreen(p_drawScreen_1_, p_drawScreen_2_, p_drawScreen_3_);
-        this.renderHoveredToolTip(p_drawScreen_1_, p_drawScreen_2_);
+        super.drawScreen(x, y, partialTicks);
+        this.renderHoveredToolTip(x, y);
     }
 
     @Override
@@ -244,26 +244,26 @@ public class GuiBetterBeacon extends GuiContainer
         }
 
         @Override
-        public void drawButton(int p_194828_1_, int p_194828_2_, float p_194828_3_)
+        public void drawButton(int x, int y, float useless)
         {
             if (this.visible)
             {
                 Minecraft.getMinecraft().getTextureManager().bindTexture(BEACON_GUI_TEXTURES);
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                this.hovered = p_194828_1_ >= this.x && p_194828_2_ >= this.y && p_194828_1_ < this.x + this.width && p_194828_2_ < this.y + this.height;
-                int lvt_5_1_ = 0;
+                this.hovered = x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height;
+                int width = 0;
                 if (!this.enabled)
                 {
-                    lvt_5_1_ += this.width * 2;
+                    width += this.width * 2;
                 } else if (this.selected)
                 {
-                    lvt_5_1_ += this.width;
+                    width += this.width;
                 } else if (this.hovered)
                 {
-                    lvt_5_1_ += this.width * 3;
+                    width += this.width * 3;
                 }
 
-                drawModalRectWithCustomSizedTexture(this.x, this.y, lvt_5_1_, 219, this.width, this.height,TEXTURE_WIDTH, TEXTURE_HEIGHT);
+                drawModalRectWithCustomSizedTexture(this.x, this.y, width, 219, this.width, this.height,TEXTURE_WIDTH, TEXTURE_HEIGHT);
                 if (!BEACON_GUI_TEXTURES.equals(this.iconTexture))
                 {
                     Minecraft.getMinecraft().getTextureManager().bindTexture(this.iconTexture);

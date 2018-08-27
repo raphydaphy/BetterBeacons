@@ -44,8 +44,8 @@ public class MixinBlockBeacon extends BlockContainer implements IBucketPickupHan
 		this.setDefaultState((this.stateContainer.getBaseState()).withProperty(WATERLOGGED, false));
 	}
 
-	protected void fillStateContainer(net.minecraft.state.StateContainer.Builder<Block, IBlockState> p_fillStateContainer_1_) {
-		p_fillStateContainer_1_.add(new IProperty[]{WATERLOGGED});
+	protected void fillStateContainer(net.minecraft.state.StateContainer.Builder<Block, IBlockState> stateMap) {
+		stateMap.add(new IProperty[]{WATERLOGGED});
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class MixinBlockBeacon extends BlockContainer implements IBucketPickupHan
 	 * @reason This is required to open my Better Beacon GUI instead of the vanilla one
 	 */
 	@Overwrite
-	public boolean onBlockActivated(IBlockState state, World world, BlockPos pos, EntityPlayer player, EnumHand p_onBlockActivated_5_, EnumFacing p_onBlockActivated_6_, float p_onBlockActivated_7_, float p_onBlockActivated_8_, float p_onBlockActivated_9_)
+	public boolean onBlockActivated(IBlockState state, World world, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing facing, float i, float dont, float care)
 	{
 		if (!world.isRemote)
 		{
@@ -78,19 +78,19 @@ public class MixinBlockBeacon extends BlockContainer implements IBucketPickupHan
 	}
 
 	@Override
-	public IBlockState updatePostPlacement(IBlockState p_updatePostPlacement_1_, EnumFacing p_updatePostPlacement_2_, IBlockState p_updatePostPlacement_3_, IWorld p_updatePostPlacement_4_, BlockPos p_updatePostPlacement_5_, BlockPos p_updatePostPlacement_6_)
+	public IBlockState updatePostPlacement(IBlockState state, EnumFacing facing, IBlockState otherState, IWorld world, BlockPos pos, BlockPos otherPos)
 	{
-		if ((Boolean) p_updatePostPlacement_1_.getValue(WATERLOGGED))
+		if ((Boolean) state.getValue(WATERLOGGED))
 		{
-			p_updatePostPlacement_4_.getPendingFluidTicks().scheduleUpdate(p_updatePostPlacement_5_, Fluids.WATER, Fluids.WATER.getTickRate(p_updatePostPlacement_4_));
+			world.getPendingFluidTicks().scheduleUpdate(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
 		}
-		return super.updatePostPlacement(p_updatePostPlacement_1_, p_updatePostPlacement_2_, p_updatePostPlacement_3_, p_updatePostPlacement_4_, p_updatePostPlacement_5_, p_updatePostPlacement_6_);
+		return super.updatePostPlacement(state, facing, otherState, world, pos, otherPos);
 	}
 
 	@Override
-	public Fluid pickupFluid(IWorld p_pickupFluid_1_, BlockPos p_pickupFluid_2_, IBlockState p_pickupFluid_3_) {
-		if ((Boolean)p_pickupFluid_3_.getValue(WATERLOGGED)) {
-			p_pickupFluid_1_.setBlockState(p_pickupFluid_2_, (IBlockState)p_pickupFluid_3_.withProperty(WATERLOGGED, false), 3);
+	public Fluid pickupFluid(IWorld world, BlockPos pos, IBlockState state) {
+		if ((Boolean)state.getValue(WATERLOGGED)) {
+			world.setBlockState(pos, (IBlockState)state.withProperty(WATERLOGGED, false), 3);
 			return Fluids.WATER;
 		} else {
 			return Fluids.EMPTY;
@@ -98,21 +98,21 @@ public class MixinBlockBeacon extends BlockContainer implements IBucketPickupHan
 	}
 
 	@Override
-	public IFluidState getFluidState(IBlockState p_getFluidState_1_) {
-		return (Boolean)p_getFluidState_1_.getValue(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(p_getFluidState_1_);
+	public IFluidState getFluidState(IBlockState state) {
+		return (Boolean)state.getValue(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
 	}
 
 	@Override
-	public boolean canContainFluid(IBlockReader p_canContainFluid_1_, BlockPos p_canContainFluid_2_, IBlockState p_canContainFluid_3_, Fluid p_canContainFluid_4_) {
-		return !(Boolean)p_canContainFluid_3_.getValue(WATERLOGGED) && p_canContainFluid_4_ == Fluids.WATER;
+	public boolean canContainFluid(IBlockReader reader, BlockPos pos, IBlockState state, Fluid fluid) {
+		return !(Boolean)state.getValue(WATERLOGGED) && fluid == Fluids.WATER;
 	}
 
 	@Override
-	public boolean receiveFluid(IWorld p_receiveFluid_1_, BlockPos p_receiveFluid_2_, IBlockState p_receiveFluid_3_, IFluidState p_receiveFluid_4_) {
-		if (!(Boolean)p_receiveFluid_3_.getValue(WATERLOGGED) && p_receiveFluid_4_.getFluid() == Fluids.WATER) {
-			if (!p_receiveFluid_1_.isRemote()) {
-				p_receiveFluid_1_.setBlockState(p_receiveFluid_2_, (IBlockState)p_receiveFluid_3_.withProperty(WATERLOGGED, true), 3);
-				p_receiveFluid_1_.getPendingFluidTicks().scheduleUpdate(p_receiveFluid_2_, Fluids.WATER, Fluids.WATER.getTickRate(p_receiveFluid_1_));
+	public boolean receiveFluid(IWorld world, BlockPos pos, IBlockState state, IFluidState fluidState) {
+		if (!(Boolean)state.getValue(WATERLOGGED) && fluidState.getFluid() == Fluids.WATER) {
+			if (!world.isRemote()) {
+				world.setBlockState(pos, (IBlockState)state.withProperty(WATERLOGGED, true), 3);
+				world.getPendingFluidTicks().scheduleUpdate(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
 			}
 
 			return true;

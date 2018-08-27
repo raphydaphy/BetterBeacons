@@ -26,33 +26,33 @@ public class ContainerBetterBeacon extends Container
         this.addSlotToContainer(this.oreSlot);
         this.addSlotToContainer(this.netherStarSlot);
 
-        int lvt_5_2_;
-        for (lvt_5_2_ = 0; lvt_5_2_ < 3; ++lvt_5_2_)
+        int counter;
+        for (counter = 0; counter < 3; ++counter)
         {
-            for (int lvt_6_1_ = 0; lvt_6_1_ < 9; ++lvt_6_1_)
+            for (int slot = 0; slot < 9; ++slot)
             {
-                this.addSlotToContainer(new Slot(playerInv, lvt_6_1_ + lvt_5_2_ * 9 + 9, 36 + lvt_6_1_ * 18, 137 + lvt_5_2_ * 18));
+                this.addSlotToContainer(new Slot(playerInv, slot + counter * 9 + 9, 36 + slot * 18, 137 + counter * 18));
             }
         }
 
-        for (lvt_5_2_ = 0; lvt_5_2_ < 9; ++lvt_5_2_)
+        for (counter = 0; counter < 9; ++counter)
         {
-            this.addSlotToContainer(new Slot(playerInv, lvt_5_2_, 36 + lvt_5_2_ * 18, 195));
+            this.addSlotToContainer(new Slot(playerInv, counter, 36 + counter * 18, 195));
         }
 
     }
 
     @Override
-    public void addListener(IContainerListener p_addListener_1_)
+    public void addListener(IContainerListener listener)
     {
-        super.addListener(p_addListener_1_);
-        p_addListener_1_.sendAllWindowProperties(this, this.tileBeacon);
+        super.addListener(listener);
+        listener.sendAllWindowProperties(this, this.tileBeacon);
     }
 
     @Override
-    public void updateProgressBar(int p_updateProgressBar_1_, int p_updateProgressBar_2_)
+    public void updateProgressBar(int field, int progress)
     {
-        this.tileBeacon.setField(p_updateProgressBar_1_, p_updateProgressBar_2_);
+        this.tileBeacon.setField(field, progress);
     }
 
     @Override
@@ -84,10 +84,10 @@ public class ContainerBetterBeacon extends Container
     public ItemStack transferStackInSlot(EntityPlayer player, int slot)
     {
         ItemStack ret = ItemStack.EMPTY;
-        Slot lvt_4_1_ = this.inventorySlots.get(slot);
-        if (lvt_4_1_ != null && lvt_4_1_.getHasStack())
+        Slot realSlot = this.inventorySlots.get(slot);
+        if (realSlot != null && realSlot.getHasStack())
         {
-            ItemStack stackInSlot = lvt_4_1_.getStack();
+            ItemStack stackInSlot = realSlot.getStack();
             ret = stackInSlot.copy();
             if (slot < 2)
             {
@@ -96,7 +96,7 @@ public class ContainerBetterBeacon extends Container
                     return ItemStack.EMPTY;
                 }
 
-                lvt_4_1_.onSlotChange(stackInSlot, ret);
+                realSlot.onSlotChange(stackInSlot, ret);
             } else if (!this.oreSlot.getHasStack() && this.oreSlot.isItemValid(stackInSlot) && this.mergeItemStack(stackInSlot, 0, 1, false))
             {
                 return ItemStack.EMPTY;
@@ -122,10 +122,10 @@ public class ContainerBetterBeacon extends Container
 
             if (stackInSlot.isEmpty())
             {
-                lvt_4_1_.putStack(ItemStack.EMPTY);
+                realSlot.putStack(ItemStack.EMPTY);
             } else
             {
-                lvt_4_1_.onSlotChanged();
+                realSlot.onSlotChanged();
             }
 
             if (stackInSlot.getCount() == ret.getCount())
@@ -133,7 +133,7 @@ public class ContainerBetterBeacon extends Container
                 return ItemStack.EMPTY;
             }
 
-            lvt_4_1_.onTake(player, stackInSlot);
+            realSlot.onTake(player, stackInSlot);
         }
 
         return ret;

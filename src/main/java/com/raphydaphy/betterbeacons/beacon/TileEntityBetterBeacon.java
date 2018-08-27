@@ -172,45 +172,45 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
         this.levels = 0;
         this.beamSegments.clear();
         this.isComplete = true;
-        BeamSegment lvt_5_1_ = new BeamSegment(EnumDyeColor.WHITE.getColorComponentValues());
-        this.beamSegments.add(lvt_5_1_);
-        boolean lvt_6_1_ = true;
-        BlockPos.MutableBlockPos lvt_7_1_ = new BlockPos.MutableBlockPos();
+        BeamSegment segment = new BeamSegment(EnumDyeColor.WHITE.getColorComponentValues());
+        this.beamSegments.add(segment);
+        boolean usefulBoolean = true;
+        BlockPos.MutableBlockPos blockPosMutable = new BlockPos.MutableBlockPos();
 
         int counter;
         for(counter = posY + 1; counter < 256; ++counter) {
-            IBlockState lvt_9_1_ = this.world.getBlockState(lvt_7_1_.setPos(posX, counter, posZ));
-            Block lvt_11_1_ = lvt_9_1_.getBlock();
-            float[] lvt_10_3_;
-            if (lvt_11_1_ instanceof BlockStainedGlass) {
-                lvt_10_3_ = ((BlockStainedGlass)lvt_11_1_).getColor().getColorComponentValues();
+            IBlockState blockState = this.world.getBlockState(blockPosMutable.setPos(posX, counter, posZ));
+            Block block = blockState.getBlock();
+            float[] colors;
+            if (block instanceof BlockStainedGlass) {
+                colors = ((BlockStainedGlass)block).getColor().getColorComponentValues();
             } else {
-                if (!(lvt_11_1_ instanceof BlockStainedGlassPane)) {
-                    if (lvt_9_1_.getOpacity(this.world, lvt_7_1_) >= 15 && lvt_11_1_ != Blocks.BEDROCK) {
+                if (!(block instanceof BlockStainedGlassPane)) {
+                    if (blockState.getOpacity(this.world, blockPosMutable) >= 15 && block != Blocks.BEDROCK) {
                         this.isComplete = false;
                         this.beamSegments.clear();
                         break;
                     }
 
-                    lvt_5_1_.incrementHeight();
+                    segment.incrementHeight();
                     continue;
                 }
 
-                lvt_10_3_ = ((BlockStainedGlassPane)lvt_11_1_).getColor().getColorComponentValues();
+                colors = ((BlockStainedGlassPane)block).getColor().getColorComponentValues();
             }
 
-            if (!lvt_6_1_) {
-                lvt_10_3_ = new float[]{(lvt_5_1_.getColors()[0] + lvt_10_3_[0]) / 2.0F, (lvt_5_1_.getColors()[1] + lvt_10_3_[1]) / 2.0F, (lvt_5_1_.getColors()[2] + lvt_10_3_[2]) / 2.0F};
+            if (!usefulBoolean) {
+                colors = new float[]{(segment.getColors()[0] + colors[0]) / 2.0F, (segment.getColors()[1] + colors[1]) / 2.0F, (segment.getColors()[2] + colors[2]) / 2.0F};
             }
 
-            if (Arrays.equals(lvt_10_3_, lvt_5_1_.getColors())) {
-                lvt_5_1_.incrementHeight();
+            if (Arrays.equals(colors, segment.getColors())) {
+                segment.incrementHeight();
             } else {
-                lvt_5_1_ = new BeamSegment(lvt_10_3_);
-                this.beamSegments.add(lvt_5_1_);
+                segment = new BeamSegment(colors);
+                this.beamSegments.add(segment);
             }
 
-            lvt_6_1_ = false;
+            usefulBoolean = false;
         }
 
         if (this.isComplete)
@@ -221,8 +221,8 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
             this.diamond = 0;
             for (counter = 1; counter <= 4; this.levels = counter++)
             {
-                int lvt_9_2_ = posY - counter;
-                if (lvt_9_2_ < 0)
+                int realPos = posY - counter;
+                if (realPos < 0)
                 {
                     break;
                 }
@@ -234,11 +234,11 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
                 int levelEmerald = 0;
                 int levelDiamond = 0;
 
-                for (int lvt_11_2_ = posX - counter; lvt_11_2_ <= posX + counter && levelComplete; ++lvt_11_2_)
+                for (int xCounter = posX - counter; xCounter <= posX + counter && levelComplete; ++xCounter)
                 {
-                    for (int lvt_12_1_ = posZ - counter; lvt_12_1_ <= posZ + counter; ++lvt_12_1_)
+                    for (int zCounter = posZ - counter; zCounter <= posZ + counter; ++zCounter)
                     {
-                        Block block = this.world.getBlockState(new BlockPos(lvt_11_2_, lvt_9_2_, lvt_12_1_)).getBlock();
+                        Block block = this.world.getBlockState(new BlockPos(xCounter, realPos, zCounter)).getBlock();
                         if (block == Blocks.IRON_BLOCK)
                         {
                             levelIron++;
@@ -283,8 +283,8 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
 
             while (var14.hasNext())
             {
-                EntityPlayerMP lvt_9_3_ = (EntityPlayerMP) var14.next();
-                CriteriaTriggers.CONSTRUCT_BEACON.trigger(lvt_9_3_, this);
+                EntityPlayerMP player = (EntityPlayerMP) var14.next();
+                CriteriaTriggers.CONSTRUCT_BEACON.trigger(player, this);
             }
         }
 
@@ -394,9 +394,9 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
         {
             if (amount >= this.payment.getCount())
             {
-                ItemStack lvt_3_1_ = this.payment;
+                ItemStack stack = this.payment;
                 this.payment = ItemStack.EMPTY;
-                return lvt_3_1_;
+                return stack;
             } else
             {
                 return this.payment.splitStack(amount);
@@ -405,9 +405,9 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
         {
             if (amount >= this.star.getCount())
             {
-                ItemStack lvt_3_1_ = this.star;
+                ItemStack stack = this.star;
                 this.star = ItemStack.EMPTY;
-                return lvt_3_1_;
+                return stack;
             } else
             {
                 return this.star.splitStack(amount);

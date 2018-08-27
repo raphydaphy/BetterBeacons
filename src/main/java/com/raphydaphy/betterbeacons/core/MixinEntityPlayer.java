@@ -36,16 +36,16 @@ public abstract class MixinEntityPlayer extends EntityLivingBase
     }
 
     @Override
-    protected void onChangedPotionEffect(PotionEffect effect, boolean p_onChangedPotionEffect_2_)
+    protected void onChangedPotionEffect(PotionEffect effect, boolean somethingGood)
     {
         Potion potion = effect.getPotion();
-        if (potion == BetterBeaconsMod.LONG_REACH_POTION && p_onChangedPotionEffect_2_ && this.world.isRemote)
+        if (potion == BetterBeaconsMod.LONG_REACH_POTION && somethingGood && this.world.isRemote)
         {
             potion.removeAttributesModifiersFromEntity(this, this.getAttributeMap(), effect.getAmplifier());
             potion.applyAttributesModifiersToEntity(this, this.getAttributeMap(), effect.getAmplifier());
         }
 
-        super.onChangedPotionEffect(effect, p_onChangedPotionEffect_2_);
+        super.onChangedPotionEffect(effect, somethingGood);
     }
 
     @Override
