@@ -94,7 +94,7 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
         {
             if (value == 1 && !activatedTiers[field - 5])
             {
-                this.func_205736_a(SoundEvents.BLOCK_BEACON_POWER_SELECT);
+                this.playSound(SoundEvents.BLOCK_BEACON_POWER_SELECT);
             }
             activatedTiers[field - 5] = value == 1;
         }
@@ -172,26 +172,21 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
         this.levels = 0;
         this.beamSegments.clear();
         this.isComplete = true;
-        TileEntityBeacon.BeamSegment lvt_5_1_ = new TileEntityBeacon.BeamSegment(EnumDyeColor.WHITE.getColorComponentValues());
+        BeamSegment lvt_5_1_ = new BeamSegment(EnumDyeColor.WHITE.getColorComponentValues());
         this.beamSegments.add(lvt_5_1_);
         boolean lvt_6_1_ = true;
         BlockPos.MutableBlockPos lvt_7_1_ = new BlockPos.MutableBlockPos();
 
         int counter;
-        for (counter = posY + 1; counter < 256; ++counter)
-        {
+        for(counter = posY + 1; counter < 256; ++counter) {
             IBlockState lvt_9_1_ = this.world.getBlockState(lvt_7_1_.setPos(posX, counter, posZ));
             Block lvt_11_1_ = lvt_9_1_.getBlock();
             float[] lvt_10_3_;
-            if (lvt_11_1_ instanceof BlockStainedGlass)
-            {
-                lvt_10_3_ = ((BlockStainedGlass) lvt_11_1_).func_196457_d().getColorComponentValues();
-            } else
-            {
-                if (!(lvt_11_1_ instanceof BlockStainedGlassPane))
-                {
-                    if (lvt_9_1_.getOpacity(this.world, lvt_7_1_) >= 15 && lvt_11_1_ != Blocks.BEDROCK)
-                    {
+            if (lvt_11_1_ instanceof BlockStainedGlass) {
+                lvt_10_3_ = ((BlockStainedGlass)lvt_11_1_).getColor().getColorComponentValues();
+            } else {
+                if (!(lvt_11_1_ instanceof BlockStainedGlassPane)) {
+                    if (lvt_9_1_.getOpacity(this.world, lvt_7_1_) >= 15 && lvt_11_1_ != Blocks.BEDROCK) {
                         this.isComplete = false;
                         this.beamSegments.clear();
                         break;
@@ -201,20 +196,17 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
                     continue;
                 }
 
-                lvt_10_3_ = ((BlockStainedGlassPane) lvt_11_1_).func_196419_d().getColorComponentValues();
+                lvt_10_3_ = ((BlockStainedGlassPane)lvt_11_1_).getColor().getColorComponentValues();
             }
 
-            if (!lvt_6_1_)
-            {
+            if (!lvt_6_1_) {
                 lvt_10_3_ = new float[]{(lvt_5_1_.getColors()[0] + lvt_10_3_[0]) / 2.0F, (lvt_5_1_.getColors()[1] + lvt_10_3_[1]) / 2.0F, (lvt_5_1_.getColors()[2] + lvt_10_3_[2]) / 2.0F};
             }
 
-            if (Arrays.equals(lvt_10_3_, lvt_5_1_.getColors()))
-            {
+            if (Arrays.equals(lvt_10_3_, lvt_5_1_.getColors())) {
                 lvt_5_1_.incrementHeight();
-            } else
-            {
-                lvt_5_1_ = new TileEntityBeacon.BeamSegment(lvt_10_3_);
+            } else {
+                lvt_5_1_ = new BeamSegment(lvt_10_3_);
                 this.beamSegments.add(lvt_5_1_);
             }
 
@@ -322,11 +314,11 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
                     int tier = countToStage(iron);
                     if (tier >= 1)
                     {
-                        nextPlayer.func_195064_c(new PotionEffect(MobEffects.STRENGTH, potionDurations, tier >= 2 ? 1 : 0, true, true));
+                        nextPlayer.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, potionDurations, tier >= 2 ? 1 : 0, true, true));
                     }
                     if (tier >= 2)
                     {
-                        nextPlayer.func_195064_c(new PotionEffect(BetterBeaconsMod.FAST_ATTACK_POTION, potionDurations, tier >= 3 ? 1 : 0, true, true));
+                        nextPlayer.addPotionEffect(new PotionEffect(BetterBeaconsMod.FAST_ATTACK_POTION, potionDurations, tier >= 3 ? 1 : 0, true, true));
                     }
                 }
                 // Quality of Life (gold)
@@ -335,19 +327,19 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
                     int tier = countToStage(gold);
                     if (tier >= 1)
                     {
-                        nextPlayer.func_195064_c(new PotionEffect(MobEffects.SPEED, potionDurations, tier >= 2 ? 1 : 0, true, true));
+                        nextPlayer.addPotionEffect(new PotionEffect(MobEffects.SPEED, potionDurations, tier >= 2 ? 1 : 0, true, true));
                     }
                     if (tier >= 2)
                     {
-                        nextPlayer.func_195064_c(new PotionEffect(MobEffects.JUMP_BOOST, potionDurations, tier >= 3 ? 1 : 0, true, true));
+                        nextPlayer.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, potionDurations, tier >= 3 ? 1 : 0, true, true));
                     }
                     if (tier >= 3)
                     {
-                        nextPlayer.func_195064_c(new PotionEffect(MobEffects.HASTE, potionDurations, tier >= 4 ? 1 : 0, true, true));
+                        nextPlayer.addPotionEffect(new PotionEffect(MobEffects.HASTE, potionDurations, tier >= 4 ? 1 : 0, true, true));
                     }
                     if (tier >= 5)
                     {
-                        nextPlayer.func_195064_c(new PotionEffect(BetterBeaconsMod.LONG_REACH_POTION, potionDurations, 0, true, true));
+                        nextPlayer.addPotionEffect(new PotionEffect(BetterBeaconsMod.LONG_REACH_POTION, potionDurations, 0, true, true));
                     }
                 }
                 // Defensive (diamond)
@@ -356,7 +348,7 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
                     int tier = countToStage(diamond);
                     if (tier >= 1)
                     {
-                        nextPlayer.func_195064_c(new PotionEffect(MobEffects.RESISTANCE, potionDurations, tier >= 2 ? 1 : 0, true, true));
+                        nextPlayer.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, potionDurations, tier >= 2 ? 1 : 0, true, true));
                     }
                 }
             }
@@ -371,7 +363,7 @@ public class TileEntityBetterBeacon extends TileEntityBeacon
 
                     for (EntityGolem golem : nearbyGolems)
                     {
-                        golem.func_195064_c(new PotionEffect(MobEffects.STRENGTH, potionDurations, tier >= 4 ? 1 : 0, false, true));
+                        golem.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, potionDurations, tier >= 4 ? 1 : 0, false, true));
                     }
                 }
             }

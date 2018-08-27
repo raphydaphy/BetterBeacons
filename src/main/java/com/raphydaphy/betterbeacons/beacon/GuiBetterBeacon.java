@@ -58,10 +58,10 @@ public class GuiBetterBeacon extends GuiContainer
         GlStateManager.enableBlend();
         int opaque = 0x262728;
         int transparent = 0x7f262728;
-        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.iron_category"), 32, 15, te.getField(1) > 0 ? opaque : transparent);
-        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.gold_category"), 32, 15 + 22, te.getField(2) > 0 ? opaque : transparent);
-        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.emerald_category"), 32, 15 + 22 * 2, te.getField(3) > 0 ? opaque : transparent);
-        fontRenderer.func_211126_b(I18n.format("beacon.betterbeacons.diamond_category"), 32, 15 + 22 * 3, te.getField(4) > 0 ? opaque : transparent);
+        fontRenderer.drawString(I18n.format("beacon.betterbeacons.iron_category"), 32, 15, te.getField(1) > 0 ? opaque : transparent);
+        fontRenderer.drawString(I18n.format("beacon.betterbeacons.gold_category"), 32, 15 + 22, te.getField(2) > 0 ? opaque : transparent);
+        fontRenderer.drawString(I18n.format("beacon.betterbeacons.emerald_category"), 32, 15 + 22 * 2, te.getField(3) > 0 ? opaque : transparent);
+        fontRenderer.drawString(I18n.format("beacon.betterbeacons.diamond_category"), 32, 15 + 22 * 3, te.getField(4) > 0 ? opaque : transparent);
         GlStateManager.disableBlend();
 
         for (GuiButton button : this.buttonList)
@@ -244,7 +244,7 @@ public class GuiBetterBeacon extends GuiContainer
         }
 
         @Override
-        public void func_194828_a(int p_194828_1_, int p_194828_2_, float p_194828_3_)
+        public void drawButton(int p_194828_1_, int p_194828_2_, float p_194828_3_)
         {
             if (this.visible)
             {

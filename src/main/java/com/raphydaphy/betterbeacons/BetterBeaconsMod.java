@@ -73,8 +73,8 @@ public class BetterBeaconsMod implements GameGuiAdder, TileEntityTypeAdder, Pack
 
         log.info("[BetterBeacons] Registering potions from ID " + nextID);
 
-        Potion.registerPotion(nextID++, MOD_ID + ":long_reach", (LONG_REACH_POTION));
-        Potion.registerPotion(nextID++, MOD_ID + ":fast_attack", (FAST_ATTACK_POTION));
+        Potion.register(nextID++, MOD_ID + ":long_reach", (LONG_REACH_POTION));
+        Potion.register(nextID++, MOD_ID + ":fast_attack", (FAST_ATTACK_POTION));
     }
 
     private static class ModPotion extends Potion
